@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">智能管理器</string>
+    <string name="action_settings">Settings</string>
+    <string name="wifi_auto_management">Wifi自动管理</string>
+    <string name="bluetootha2dp_auto_management">蓝牙A2DP自动管理</string>
+    <string name="on">开</string>
+    <string name="off">关</string>
+    <string name="auto_sync_sms">短信云备份</string>
+    <string name="last_backup_date">上次备份时间：</string>
+    <string name="introduce_wifi">软件通过智能学习，帮助您自动管理您的WIFI，在有能够自动连接WIFI的地点自动打开WIFI开关，当您离开以后自动关闭WIFI开关，最大限度的帮您节省电量。</string>
+    <string name="introduce_a2dp">蓝牙A2DP设备断开后自动关闭设备蓝牙开关。场景1：您在车里打开手机蓝牙连接汽车听音乐，当您熄火下车以后，手机蓝牙设备会自动关闭。场景2：您使用蓝牙耳机听音乐，当您关闭蓝牙耳机以后，您手机的蓝牙开关也会自动关闭。此功能仅对3.0以上设备有效。</string>
+    <string name="notice">注意：当您第一次来到一个陌生的地点连接WIFI时需要手动打开WIFI，软件会学习您的习惯，当您以后再来到这里软件便可自动连接WIFI网络了。软件需要一定的学习时间，在您使用一段时间以后，WIFI开关会变得更灵敏。</string>
+    <string name="myphone_error">无法获取您的手机号码与SIM卡信息，短信云备份禁用。</string>
+    <string name="sync_sms_immediatly">立即备份</string>
+    <string name="restore_sms_immediatly">还原</string>
+    <string name="already_the_newest">已经是最新的，不需要同步了。</string>
+    <string name="slash">/</string>
+    <string name="backup_id">备份帐号：</string>
+    <string name="clear_your_local_sms_first">您的本地短信与服务器上备份的短信可能有冲突，请先清空本地短信再还原，以免造成短信大量重复。</string>
+    <string name="restore_already_running">正在还原，请勿多次点击。</string>
+    <string name="introduce_sms_backup">短信云备份会在您插上充电器并且连上WIFI时开始进行增量备份，并且每24小时最多只会增量备份一次。因此不用担心流量问题。备份优先使用Google账户，若您的手机没有绑定Google帐号，软件会自动使用手机号进行云备份。</string>
+    <string name="no_backup_id">无法获取备份帐号</string>
+
+</resources>
