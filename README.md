@@ -1,4 +1,4 @@
 AutoManagement
 ==============
 
-AutoWifi
+AutoWifi v1.0
