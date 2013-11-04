@@ -36,7 +36,6 @@ import android.widget.ToggleButton;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-SdLogger.logD(this, "onCreate", "start");
 		// SmsBackup.clearLastBackupSMSTime(this);
 
 		lastBackupDateTv = (TextView) findViewById(R.id.sms_sync_date);

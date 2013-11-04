@@ -37,7 +37,6 @@ public class BPushUtils {
             	apiKey = metaData.getString(metaKey);
             }
         } catch (NameNotFoundException e) {
-
         }
         return apiKey;
     }
