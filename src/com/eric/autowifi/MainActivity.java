@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -23,7 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class MainActivity extends Activity {
+@SuppressLint("HandlerLeak") public class MainActivity extends Activity {
+	public static final int UPDATE_SMS_BACKUP_TIME = 1;
 	private View lastBackupDateContainer;
 	private TextView lastBackupDateTv;
 	private TextView restoreCompleted;
@@ -31,11 +33,10 @@ public class MainActivity extends Activity {
 	private TextView backupID;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+SdLogger.logD(this, "onCreate", "start");
 		// SmsBackup.clearLastBackupSMSTime(this);
 
 		lastBackupDateTv = (TextView) findViewById(R.id.sms_sync_date);
@@ -46,8 +47,7 @@ public class MainActivity extends Activity {
 		findViewById(R.id.sync_sms_immediatly).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
-					public void onClick(View v)
-					{
+					public void onClick(View v) {
 						System.out.println(Utils.formatDateFromMillions(SmsBackup
 								.getLastBackupSMSTime(MainActivity.this)));
 						initLastBackupDateContainer();
@@ -58,8 +58,7 @@ public class MainActivity extends Activity {
 		findViewById(R.id.restore_sms_immediatly).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
-					public void onClick(View v)
-					{
+					public void onClick(View v) {
 						Utils.doRestoreImmediatly(MainActivity.this);
 					}
 				});
@@ -70,18 +69,12 @@ public class MainActivity extends Activity {
 
 		wifiAutoTb.setChecked(Utils.getServiceToggle(this));
 		a2dpTb.setChecked(Utils.getBluetoothA2dpToggle(this));
-		if (Utils.getGoogleAccount(this).length() > 0)
-		{
+		if (Utils.getGoogleAccount(this).length() > 0) {
 			autoSyncSmsTb.setChecked(Utils.getAutoSyncSmsToggle(this));
-		}
-		else
-		{
-			if (SmsBackup.getMyPhoneNumber(this).length() > 0)
-			{
+		} else {
+			if (SmsBackup.getMyPhoneNumber(this).length() > 0) {
 				autoSyncSmsTb.setChecked(Utils.getAutoSyncSmsToggle(this));
-			}
-			else
-			{
+			} else {
 				Utils.setAutoSyncSmsToggle(this, false);
 				autoSyncSmsTb.setChecked(false);
 			}
@@ -96,17 +89,13 @@ public class MainActivity extends Activity {
 
 		wifiAutoTb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked)
-			{
+					boolean isChecked) {
 				Utils.setServiceToggle(MainActivity.this, isChecked);
-				if (isChecked)
-				{
+				if (isChecked) {
 					Utils.startAlarm(MainActivity.this,
 							Constants.MAINACTIVITY_TRIGGER_AFTER_MILLISECONDS,
 							Constants.DEFAULT_ALARM_INTERVAL);
-				}
-				else
-				{
+				} else {
 					Utils.stopAlarm(MainActivity.this);
 				}
 			}
@@ -114,40 +103,29 @@ public class MainActivity extends Activity {
 
 		a2dpTb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked)
-			{
+					boolean isChecked) {
 				Utils.setBluetoothA2dpToggle(MainActivity.this, isChecked);
 			}
 		});
 
 		autoSyncSmsTb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked)
-			{
-				if (isChecked)
-				{
-					if (Utils.getGoogleAccount(MainActivity.this).length() > 0)
-					{
+					boolean isChecked) {
+				if (isChecked) {
+					if (Utils.getGoogleAccount(MainActivity.this).length() > 0) {
 						Utils.setAutoSyncSmsToggle(MainActivity.this, isChecked);
-					}
-					else
-					{
+					} else {
 						if (SmsBackup.getMyPhoneNumber(MainActivity.this)
-								.length() > 0)
-						{
+								.length() > 0) {
 							Utils.setAutoSyncSmsToggle(MainActivity.this,
 									isChecked);
-						}
-						else
-						{
+						} else {
 							String myphoneNumber = Utils
 									.getMyphoneNunmber(MainActivity.this);
 							if (myphoneNumber == null
-									|| "".equals(myphoneNumber))
-							{
+									|| "".equals(myphoneNumber)) {
 								String imsi = Utils.getImsi(MainActivity.this);
-								if (imsi == null || "".equals(imsi))
-								{
+								if (imsi == null || "".equals(imsi)) {
 									Utils.setAutoSyncSmsToggle(
 											MainActivity.this, false);
 									autoSyncSmsTb.setChecked(false);
@@ -156,18 +134,14 @@ public class MainActivity extends Activity {
 											MainActivity.this
 													.getString(R.string.myphone_error),
 											Toast.LENGTH_SHORT).show();
-								}
-								else
-								{
+								} else {
 									SmsBackup.setMyPhoneNumber(
 											MainActivity.this, imsi);
 									Utils.setAutoSyncSmsToggle(
 											MainActivity.this, true);
 									autoSyncSmsTb.setChecked(true);
 								}
-							}
-							else
-							{
+							} else {
 								SmsBackup.setMyPhoneNumber(MainActivity.this,
 										myphoneNumber);
 								Utils.setAutoSyncSmsToggle(MainActivity.this,
@@ -176,9 +150,7 @@ public class MainActivity extends Activity {
 							}
 						}
 					}
-				}
-				else
-				{
+				} else {
 					Utils.setAutoSyncSmsToggle(MainActivity.this, isChecked);
 				}
 				initLastBackupDateContainer();
@@ -188,8 +160,7 @@ public class MainActivity extends Activity {
 
 		boolean isFirstOpen = Utils.getFirstOpenFlag(this);
 		Log.d("MainActivity", "isFirstOpen = " + isFirstOpen);
-		if (isFirstOpen)
-		{
+		if (isFirstOpen) {
 			final HttpRequestHelper hrh = new HttpRequestHelper();
 
 			String imei = Utils.getImei(this);
@@ -200,19 +171,15 @@ public class MainActivity extends Activity {
 			LocationManager locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 			Location location = locMan
 					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			if (location == null)
-			{
+			if (location == null) {
 				location = locMan
 						.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 			}
 			double latitude, longitude;
-			if (location == null)
-			{
+			if (location == null) {
 				latitude = 0;
 				longitude = 0;
-			}
-			else
-			{
+			} else {
 				latitude = location.getLatitude();
 				longitude = location.getLongitude();
 			}
@@ -223,21 +190,16 @@ public class MainActivity extends Activity {
 			Log.d("MainActivity.MobileDeviceInfoTrackUrl", url);
 			new Thread(new Runnable() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					JSONObject jo = hrh.sendRequestAndReturnJson(url);
-					if (jo != null && jo.has("ret"))
-					{
+					if (jo != null && jo.has("ret")) {
 						int ret = -1;
-						try
-						{
+						try {
 							ret = jo.getInt("ret");
-							if (ret != -1)
-							{
+							if (ret != -1) {
 								Utils.setFirstOpenFlag(MainActivity.this, false);
 							}
-						} catch (JSONException e)
-						{
+						} catch (JSONException e) {
 							e.printStackTrace();
 						}
 					}
@@ -247,8 +209,7 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		// getMenuInflater().inflate(R.menu.main, menu);
 		return true;
@@ -257,111 +218,82 @@ public class MainActivity extends Activity {
 	private String genUrl(String imei, String os, String osVersion,
 			String model, String resolution, double latitude, double longitude,
 			String country, String city, String opr, String code,
-			String browser, String network)
-	{
+			String browser, String network) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("http://0.mtracker.duapp.com/mobiledeviceinfotrack?");
-		try
-		{
-			if (imei != null)
-			{
+		try {
+			if (imei != null) {
 				sb.append("imei=").append(URLEncoder.encode(imei, "utf-8"));
 			}
-			if (os != null)
-			{
+			if (os != null) {
 				sb.append("&os=").append(URLEncoder.encode(os, "utf-8"));
 			}
-			if (osVersion != null)
-			{
+			if (osVersion != null) {
 				sb.append("&osVersion=").append(
 						URLEncoder.encode(osVersion, "utf-8"));
 			}
-			if (model != null)
-			{
+			if (model != null) {
 				sb.append("&model=").append(URLEncoder.encode(model, "utf-8"));
 			}
-			if (resolution != null)
-			{
+			if (resolution != null) {
 				sb.append("&resolution=").append(
 						URLEncoder.encode(resolution, "utf-8"));
 			}
-			if (latitude > 0)
-			{
+			if (latitude > 0) {
 				sb.append("&latitude=").append(latitude);
 			}
-			if (longitude > 0)
-			{
+			if (longitude > 0) {
 				sb.append("&longitude=").append(longitude);
 			}
-			if (country != null)
-			{
+			if (country != null) {
 				sb.append("&country=").append(
 						URLEncoder.encode(country, "utf-8"));
 			}
-			if (city != null)
-			{
+			if (city != null) {
 				sb.append("&city=").append(URLEncoder.encode(city, "utf-8"));
 			}
-			if (opr != null)
-			{
+			if (opr != null) {
 				sb.append("&opr=").append(URLEncoder.encode(opr, "utf-8"));
 			}
-			if (code != null)
-			{
+			if (code != null) {
 				sb.append("&code=").append(URLEncoder.encode(code, "utf-8"));
 			}
-			if (browser != null)
-			{
+			if (browser != null) {
 				sb.append("&browser=").append(
 						URLEncoder.encode(browser, "utf-8"));
 			}
-			if (network != null)
-			{
+			if (network != null) {
 				sb.append("&network=").append(
 						URLEncoder.encode(network, "utf-8"));
 			}
-		} catch (UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return sb.toString();
 	}
 
-	private void initLastBackupDateContainer()
-	{
-		if (lastBackupDateContainer != null && Utils.getAutoSyncSmsToggle(this))
-		{
+	private void initLastBackupDateContainer() {
+		if (lastBackupDateContainer != null && Utils.getAutoSyncSmsToggle(this)) {
 			lastBackupDateContainer.setVisibility(View.VISIBLE);
-			if (lastBackupDateTv != null)
-			{
+			if (lastBackupDateTv != null) {
 				lastBackupDateTv.setText(Utils.formatDateFromMillions(SmsBackup
 						.getLastDoBackupTime(this)));
 			}
-		}
-		else
-		{
+		} else {
 			lastBackupDateContainer.setVisibility(View.GONE);
 		}
 	}
 
-	private void initBackupId()
-	{
-		if (backupID != null)
-		{
+	private void initBackupId() {
+		if (backupID != null) {
 			String googleAccount = Utils.getGoogleAccount(this);
-			if (!"".equals(googleAccount))
-			{
+			if (!"".equals(googleAccount)) {
 				backupID.setText(googleAccount);
-			}
-			else
-			{
+			} else {
 				String myphoneNumber = SmsBackup.getMyPhoneNumber(this);
-				if (!"".equals(myphoneNumber))
-				{
+				if (!"".equals(myphoneNumber)) {
 					backupID.setText(myphoneNumber);
-				}
-				else
-				{
+				} else {
 					backupID.setText(getString(R.string.no_backup_id));
 				}
 			}
@@ -370,24 +302,38 @@ public class MainActivity extends Activity {
 
 	private Handler restoreHandler = new Handler() {
 		@Override
-		public void handleMessage(Message msg)
-		{
+		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			int completed = msg.arg1;
 			int total = msg.arg2;
-			if (restoreCompleted != null)
-			{
+			if (restoreCompleted != null) {
 				restoreCompleted.setText(String.valueOf(completed));
 			}
-			if (restoreTotal != null)
-			{
+			if (restoreTotal != null) {
 				restoreTotal.setText(String.valueOf(total));
 			}
 		}
 	};
 
-	public Handler getRestoreHandler()
-	{
+	public Handler getRestoreHandler() {
 		return restoreHandler;
+	}
+
+	@SuppressLint("HandlerLeak") private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case UPDATE_SMS_BACKUP_TIME:
+				initLastBackupDateContainer();
+				break;
+			default:
+				break;
+			}
+		}
+	};
+
+	public Handler getHandler() {
+		return handler;
 	}
 }
