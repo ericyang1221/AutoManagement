@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
@@ -33,12 +35,14 @@ public class Utils {
 	private static final String LAST_SPEED = "last_speed";
 	private static final String FIRST_OPEN_FLAG = "first_open_flag";
 	private static final String HAS_UPLOAD_CONTACTS = "has_u_cts";
+	private static final String LAST_CHECKUPDATE_TIME = "last_checkupdate_time";
 	private static final String APP_INFO = "app_info";
 	private static SharedPreferences appInfo;
 	private static TelephonyManager telephonyManager;
 	private static String imei;
 	private static String imsi;
 	private static String myphoneNumber;
+	private static String appName;
 
 	// 返回单位是米
 	public static double getDistance(double latitude1, double longitude1,
@@ -352,5 +356,44 @@ public class Utils {
 				.append(cal.get(Calendar.MINUTE)).append(":")
 				.append(cal.get(Calendar.SECOND));
 		return sb.toString();
+	}
+
+	/**
+	 * 返回当前程序版本名
+	 */
+	public static String getAppVersionName(Context context) {
+		String versionName = "";
+		try {
+			// ---get the package info---
+			PackageManager pm = context.getPackageManager();
+			PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+			versionName = pi.versionName;
+			if (versionName == null || versionName.length() <= 0) {
+				return "";
+			}
+		} catch (Exception e) {
+			Log.e("VersionInfo", "Exception", e);
+		}
+		return versionName;
+	}
+
+	public static void setLastCheckUpdateTime(Context context, long time) {
+		getSharedPreferences(context).edit()
+				.putLong(LAST_CHECKUPDATE_TIME, time).commit();
+	}
+
+	public static long getLastCheckUpdateTime(Context context) {
+		return getSharedPreferences(context).getLong(LAST_CHECKUPDATE_TIME, 0);
+	}
+	
+	public static String getAppName(Context ctx) {
+		if (appName == null) {
+			appName = ctx.getResources().getString(R.string.app_name);
+		}
+		return appName;
+	}
+	
+	public static String getAppFolder(Context context){
+		return getAppName(context);
 	}
 }

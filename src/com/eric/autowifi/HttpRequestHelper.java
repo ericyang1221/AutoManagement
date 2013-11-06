@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -31,40 +32,33 @@ import org.json.JSONObject;
  */
 public class HttpRequestHelper {
 
-	public String sendRequestAndReturnString(String url)
-	{
+	public String sendRequestAndReturnString(String url) {
 		StringBuffer response = new StringBuffer();
 		// HttpClient client = new DefaultHttpClient();
 		HttpClient client = new DefaultHttpClient();
-		try
-		{
+		try {
 			HttpResponse hr = client.execute(new HttpGet(url));
 			HttpEntity entity = hr.getEntity();
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					entity.getContent()));
 			String buff = null;
-			while ((buff = br.readLine()) != null)
-			{
+			while ((buff = br.readLine()) != null) {
 				response.append(buff);
 			}
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
-		} finally
-		{
+		} finally {
 			// client.getConnectionManager().shutdown();
 		}
 		return response.toString();
 	}
 
 	public String sendPostRequestAndReturnString(String url,
-			List<NameValuePair> params)
-	{
+			List<NameValuePair> params) {
 		StringBuffer response = new StringBuffer();
 		// HttpClient client = new DefaultHttpClient();
 		HttpClient client = new DefaultHttpClient();
-		try
-		{
+		try {
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
 			HttpResponse hr = client.execute(httpPost);
@@ -72,62 +66,49 @@ public class HttpRequestHelper {
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					entity.getContent()));
 			String buff = null;
-			while ((buff = br.readLine()) != null)
-			{
+			while ((buff = br.readLine()) != null) {
 				response.append(buff);
 			}
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
-		} finally
-		{
+		} finally {
 			// client.getConnectionManager().shutdown();
 		}
 		return response.toString();
 	}
 
-	public JSONObject sendRequestAndReturnJson(String url)
-	{
+	public JSONObject sendRequestAndReturnJson(String url) {
 		JSONObject jsonObject = null;
-		try
-		{
+		try {
 			jsonObject = new JSONObject(sendRequestAndReturnString(url));
-		} catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return jsonObject;
 	}
 
 	public JSONObject sendPostRequestAndReturnJson(String url,
-			List<NameValuePair> params)
-	{
+			List<NameValuePair> params) {
 		JSONObject jsonObject = null;
-		try
-		{
+		try {
 			String res = sendPostRequestAndReturnString(url, params);
 			// System.out.println(res);
 			jsonObject = new JSONObject(res);
-		} catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return jsonObject;
 	}
 
 	public JSONObject sendFileAndReturnJson(String url,
-			Map<String, String> params, Map<String, File> files)
-	{
+			Map<String, String> params, Map<String, File> files) {
 		JSONObject jsonObject = null;
-		try
-		{
+		try {
 			jsonObject = new JSONObject(postFileAndReturnString(url, params,
 					files));
-		} catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return jsonObject;
@@ -135,8 +116,7 @@ public class HttpRequestHelper {
 
 	private String postFileAndReturnString(String url,
 			Map<String, String> params, Map<String, File> files)
-			throws IOException
-	{
+			throws IOException {
 		String BOUNDARY = java.util.UUID.randomUUID().toString();
 		String PREFIX = "--", LINEND = "\r\n";
 		String MULTIPART_FROM_DATA = "multipart/form-data";
@@ -155,8 +135,7 @@ public class HttpRequestHelper {
 				+ ";boundary=" + BOUNDARY);
 
 		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<String, String> entry : params.entrySet())
-		{
+		for (Map.Entry<String, String> entry : params.entrySet()) {
 			sb.append(PREFIX);
 			sb.append(BOUNDARY);
 			sb.append(LINEND);
@@ -177,8 +156,7 @@ public class HttpRequestHelper {
 
 		outStream.write(sb.toString().getBytes());
 		if (files != null)
-			for (Map.Entry<String, File> file : files.entrySet())
-			{
+			for (Map.Entry<String, File> file : files.entrySet()) {
 				StringBuilder sb1 = new StringBuilder();
 				sb1.append(PREFIX);
 				sb1.append(BOUNDARY);
@@ -193,8 +171,7 @@ public class HttpRequestHelper {
 				InputStream is = new FileInputStream(file.getValue());
 				byte[] buffer = new byte[1024];
 				int len = 0;
-				while ((len = is.read(buffer)) != -1)
-				{
+				while ((len = is.read(buffer)) != -1) {
 					outStream.write(buffer, 0, len);
 				}
 
@@ -207,16 +184,14 @@ public class HttpRequestHelper {
 		outStream.flush();
 		int res = conn.getResponseCode();
 		String ret = "";
-		if (res == 200)
-		{
+		if (res == 200) {
 			InputStream in = conn.getInputStream();
 
 			BufferedReader bufferedReader = new BufferedReader(
 					new InputStreamReader(in, "UTF-8"));
 			StringBuffer temp = new StringBuffer();
 			String line = bufferedReader.readLine();
-			while (line != null)
-			{
+			while (line != null) {
 				temp.append(line).append("\r\n");
 				line = bufferedReader.readLine();
 			}
@@ -227,5 +202,54 @@ public class HttpRequestHelper {
 		outStream.close();
 		conn.disconnect();
 		return ret;
+	}
+
+	/**
+	 * 
+	 * @param urlStr
+	 * @param path
+	 * @param fileName
+	 * @return -1:文件下载出错 0:文件下载成功 1:文件已经存在
+	 */
+	public File downFile(String urlStr, String path, String fileName) {
+		File resultFile = null;
+		InputStream inputStream = null;
+		try {
+			FileUtils fileUtils = new FileUtils();
+			File f = fileUtils.getFile(path + fileName);
+			if (f.exists()) {
+				return f;
+			} else {
+				HttpURLConnection urlConn = null;
+				URL url = null;
+				int fileSize;
+				try {
+					url = new URL(urlStr);
+					urlConn = (HttpURLConnection) url.openConnection();
+					fileSize = urlConn.getContentLength();
+					inputStream = urlConn.getInputStream();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+				resultFile = fileUtils.write2SDFromInput(path, fileName,
+						inputStream, fileSize);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			try {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return resultFile;
 	}
 }

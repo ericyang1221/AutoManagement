@@ -8,11 +8,14 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.Display;
@@ -24,19 +27,66 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-@SuppressLint("HandlerLeak") public class MainActivity extends Activity {
+import com.eric.autowifi.SmsRestoreService.MyBinder;
+import com.eric.autowifi.SmsRestoreService.SmsRestoreListener;
+
+@SuppressLint("HandlerLeak")
+public class MainActivity extends Activity {
 	public static final int UPDATE_SMS_BACKUP_TIME = 1;
 	private View lastBackupDateContainer;
 	private TextView lastBackupDateTv;
 	private TextView restoreCompleted;
 	private TextView restoreTotal;
 	private TextView backupID;
+	private SmsRestoreService smsRestoreService;
+	private boolean mBound = false;
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			MyBinder binder = (MyBinder) service;
+			smsRestoreService = binder.getService();
+			smsRestoreService.setSmsRestoreListener(new SmsRestoreListener() {
+				@Override
+				public void onSmsAlreadyExist() {
+					Toast.makeText(MainActivity.this,
+							R.string.clear_your_local_sms_first,
+							Toast.LENGTH_LONG).show();
+				}
+
+				@Override
+				public void onProgressChange(int completed, int total) {
+					if (restoreCompleted != null) {
+						restoreCompleted.setText(String.valueOf(completed));
+					}
+					if (restoreTotal != null) {
+						restoreTotal.setText(String.valueOf(total));
+					}
+				}
+
+				@Override
+				public void onRestoreAlreadyRunning() {
+					Toast.makeText(MainActivity.this,
+							R.string.restore_already_running, Toast.LENGTH_LONG)
+							.show();
+				}
+			});
+			mBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mBound = false;
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
 		// SmsBackup.clearLastBackupSMSTime(this);
+		// UpdateManager.doUpdate(this);
 
 		lastBackupDateTv = (TextView) findViewById(R.id.sms_sync_date);
 		restoreCompleted = (TextView) findViewById(R.id.restore_completed);
@@ -299,26 +349,43 @@ import android.widget.ToggleButton;
 		}
 	}
 
-	private Handler restoreHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			int completed = msg.arg1;
-			int total = msg.arg2;
-			if (restoreCompleted != null) {
-				restoreCompleted.setText(String.valueOf(completed));
-			}
-			if (restoreTotal != null) {
-				restoreTotal.setText(String.valueOf(total));
-			}
-		}
-	};
-
-	public Handler getRestoreHandler() {
-		return restoreHandler;
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Intent intent = new Intent(this, SmsRestoreService.class);
+		// bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
-	@SuppressLint("HandlerLeak") private Handler handler = new Handler() {
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (mBound) {
+			unbindService(mConnection);
+			mBound = false;
+		}
+	}
+
+	// private Handler restoreHandler = new Handler() {
+	// @Override
+	// public void handleMessage(Message msg) {
+	// super.handleMessage(msg);
+	// int completed = msg.arg1;
+	// int total = msg.arg2;
+	// if (restoreCompleted != null) {
+	// restoreCompleted.setText(String.valueOf(completed));
+	// }
+	// if (restoreTotal != null) {
+	// restoreTotal.setText(String.valueOf(total));
+	// }
+	// }
+	// };
+
+	// public Handler getRestoreHandler() {
+	// return restoreHandler;
+	// }
+
+	@SuppressLint("HandlerLeak")
+	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);

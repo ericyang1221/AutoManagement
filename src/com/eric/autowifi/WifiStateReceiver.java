@@ -7,48 +7,39 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo.State;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.DetailedState;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 public class WifiStateReceiver extends BroadcastReceiver {
-
 	@Override
-	public void onReceive(final Context context, Intent intent)
-	{
-		Log.d("WifiStateReceiver", "wifi state changed.");
-		// 获得网络连接服务
-		ConnectivityManager connManager = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		// State state = connManager.getActiveNetworkInfo().getState();
-		// 获取WIFI网络连接状态
-		State state = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-				.getState();
-		// 判断是否正在使用WIFI网络
-		Log.d("wifi state", state.toString());
-		if (State.CONNECTED == state)
-		{
+	public void onReceive(final Context context, Intent intent) {
+		NetworkInfo networkInfo = intent
+				.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+		DetailedState state = networkInfo.getDetailedState();
+		Log.d("DetailedState", String.valueOf(state));
+		if (DetailedState.CONNECTED == state) {
+			Log.d("WifiStateReceiver", "WIFI CONNECTED.");
 			Utils.stopAlarm(context);
 			Utils.initApiKey(context);
 			Utils.doAutoSmsBackup(context);
+			UpdateManager.doUpdate(context);
 			LocationManagerUtil l = new LocationManagerUtil(context);
 			l.requestLocation(new OnLocationChangeListener() {
 				@Override
-				public void onLocationChanged(Location location)
-				{
+				public void onLocationChanged(Location location) {
 					double lat = location.getLatitude();
 					double lng = location.getLongitude();
 					LocationDB ldb = new LocationDB(context);
 					List<LocationBean> lbList = ldb.selectAll();
-					if (lbList != null && !lbList.isEmpty())
-					{
+					if (lbList != null && !lbList.isEmpty()) {
 						Collections
 								.sort(lbList, new DisAscComparator(lat, lng));
 						LocationBean nearest = lbList.get(0);
 						double d = Utils.getDistance(lat, lng,
 								nearest.getLatitude(), nearest.getLongitude());
-						if (d > Constants.DEFAULT_INSERT_RADIUS)
-						{
+						if (d > Constants.DEFAULT_INSERT_RADIUS) {
 							ldb.insert(new LocationBean(0, lat, lng));
 							Log.d("ldb.insert distence", String.valueOf(d));
 						}
@@ -58,28 +49,20 @@ public class WifiStateReceiver extends BroadcastReceiver {
 						// l.getLatitude(), l.getLongitude());
 						// System.out.println(ds);
 						// }
-					}
-					else
-					{
+					} else {
 						ldb.insert(new LocationBean(0, lat, lng));
 						Log.d("WifiStateReceiver",
 								"first location has inserted.");
 					}
 				}
 			});
-		}
-		else
-		{
+		} else if (DetailedState.DISCONNECTED == state) {
+			Log.d("WifiStateReceiver", "WIFI DISCONNECTED.");
 			Utils.startAlarm(context,
 					Constants.DISCONNECT_TO_CONNECT_TRIGGER_AFTER_MILLISECONDS,
 					Constants.DEFAULT_ALARM_INTERVAL);
+		} else {
+			Log.d("WifiStateReceiver", "WIFI OTHER STATES.");
 		}
-		// // 获取GPRS网络连接状态
-		// state = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-		// .getState();
-		// // 判断是否正在使用GPRS网络
-		// if (State.CONNECTED != state)
-		// {
-		// }
 	}
 }

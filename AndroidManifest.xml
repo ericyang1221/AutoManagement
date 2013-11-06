@@ -43,7 +43,10 @@
 
         <receiver android:name="com.eric.autowifi.WifiStateReceiver" >
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+
+                <!-- <action android:name="android.net.conn.CONNECTIVITY_CHANGE" /> -->
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <!-- <action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE" /> -->
             </intent-filter>
         </receiver>
         <receiver android:name="com.eric.autowifi.BootCompletedReceiver" >
@@ -105,11 +108,16 @@
         <service
             android:name="com.baidu.android.pushservice.PushService"
             android:exported="true"
-            android:process=":bdservice_v1" />
+            android:process=":bdservice_v1" >
+        </service>
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" >
+        </service>
+        <service
+            android:name=".DownloadService"
+            android:exported="true" >
         </service>
 
         <meta-data
