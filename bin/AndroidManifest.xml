@@ -119,6 +119,10 @@
             android:name=".DownloadService"
             android:exported="true" >
         </service>
+        <service
+            android:name=".SmsRestoreService"
+            android:exported="true" >
+        </service>
 
         <meta-data
             android:name="api_key"

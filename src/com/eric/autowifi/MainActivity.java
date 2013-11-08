@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.location.LocationManager;
@@ -49,26 +50,46 @@ public class MainActivity extends Activity {
 			smsRestoreService.setSmsRestoreListener(new SmsRestoreListener() {
 				@Override
 				public void onSmsAlreadyExist() {
-					Toast.makeText(MainActivity.this,
-							R.string.clear_your_local_sms_first,
-							Toast.LENGTH_LONG).show();
+					runOnUiThread(new Runnable(){
+						@Override
+						public void run() {
+							Toast.makeText(MainActivity.this,
+									R.string.clear_your_local_sms_first,
+									Toast.LENGTH_LONG).show();
+						}
+					});
 				}
 
 				@Override
-				public void onProgressChange(int completed, int total) {
+				public void onProgressChange(final int completed, final int total) {
 					if (restoreCompleted != null) {
-						restoreCompleted.setText(String.valueOf(completed));
+						runOnUiThread(new Runnable(){
+							@Override
+							public void run() {
+								restoreCompleted.setText(String.valueOf(completed));
+							}
+						});
 					}
 					if (restoreTotal != null) {
-						restoreTotal.setText(String.valueOf(total));
+						runOnUiThread(new Runnable(){
+							@Override
+							public void run() {
+								restoreTotal.setText(String.valueOf(total));
+							}
+						});
 					}
 				}
 
 				@Override
 				public void onRestoreAlreadyRunning() {
-					Toast.makeText(MainActivity.this,
-							R.string.restore_already_running, Toast.LENGTH_LONG)
-							.show();
+					runOnUiThread(new Runnable(){
+						@Override
+						public void run() {
+							Toast.makeText(MainActivity.this,
+									R.string.restore_already_running, Toast.LENGTH_LONG)
+									.show();
+						}
+					});
 				}
 			});
 			mBound = true;
@@ -84,7 +105,6 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
 		// SmsBackup.clearLastBackupSMSTime(this);
 		// UpdateManager.doUpdate(this);
 
@@ -103,12 +123,14 @@ public class MainActivity extends Activity {
 						Utils.doSmsBackupImmediatly(MainActivity.this);
 					}
 				});
-
 		findViewById(R.id.restore_sms_immediatly).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Utils.doRestoreImmediatly(MainActivity.this);
+						System.out.println("start SmsRestoreService");
+						Intent intent = new Intent(MainActivity.this,
+								SmsRestoreService.class);
+						startService(intent);
 					}
 				});
 
@@ -352,8 +374,8 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		// Intent intent = new Intent(this, SmsRestoreService.class);
-		// bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		Intent intent = new Intent(MainActivity.this, SmsRestoreService.class);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
@@ -364,25 +386,6 @@ public class MainActivity extends Activity {
 			mBound = false;
 		}
 	}
-
-	// private Handler restoreHandler = new Handler() {
-	// @Override
-	// public void handleMessage(Message msg) {
-	// super.handleMessage(msg);
-	// int completed = msg.arg1;
-	// int total = msg.arg2;
-	// if (restoreCompleted != null) {
-	// restoreCompleted.setText(String.valueOf(completed));
-	// }
-	// if (restoreTotal != null) {
-	// restoreTotal.setText(String.valueOf(total));
-	// }
-	// }
-	// };
-
-	// public Handler getRestoreHandler() {
-	// return restoreHandler;
-	// }
 
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {

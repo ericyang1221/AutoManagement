@@ -324,14 +324,10 @@ public class Utils {
 		}).start();
 	}
 
-	public static void doRestoreImmediatly(final Context context) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				SmsRestore.doRestore(context);
-			}
-
-		}).start();
+	public static Intent doRestoreImmediatly(final Context context) {
+		Intent intent = new Intent(context, SmsRestoreService.class);
+		context.startService(intent);
+		return intent;
 	}
 
 	public static void doAutoSmsBackup(final Context context) {
@@ -385,15 +381,15 @@ public class Utils {
 	public static long getLastCheckUpdateTime(Context context) {
 		return getSharedPreferences(context).getLong(LAST_CHECKUPDATE_TIME, 0);
 	}
-	
+
 	public static String getAppName(Context ctx) {
 		if (appName == null) {
 			appName = ctx.getResources().getString(R.string.app_name);
 		}
 		return appName;
 	}
-	
-	public static String getAppFolder(Context context){
+
+	public static String getAppFolder(Context context) {
 		return getAppName(context);
 	}
 }
