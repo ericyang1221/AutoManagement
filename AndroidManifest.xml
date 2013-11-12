@@ -123,6 +123,10 @@
             android:name=".SmsRestoreService"
             android:exported="true" >
         </service>
+        <service
+            android:name=".A2dpService"
+            android:exported="true" >
+        </service>
 
         <meta-data
             android:name="api_key"
