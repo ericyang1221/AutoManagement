@@ -22,5 +22,8 @@
     <string name="restore_already_running">正在还原，请勿多次点击。</string>
     <string name="introduce_sms_backup">短信云备份会在您插上充电器并且连上WIFI时开始进行增量备份，并且每24小时最多只会增量备份一次。因此不用担心流量问题。备份优先使用Google账户，若您的手机没有绑定Google帐号，软件会自动使用手机号进行云备份。</string>
     <string name="no_backup_id">无法获取备份帐号</string>
+    <string name="edit">编辑</string>
+    <string name="profile">情景模式</string>
+    <string name="setting">设置</string>
 
 </resources>

@@ -40,6 +40,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name="com.eric.profile.ProfileCatagoryActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+             >
+        </activity>
 
         <receiver android:name="com.eric.autowifi.WifiStateReceiver" >
             <intent-filter>

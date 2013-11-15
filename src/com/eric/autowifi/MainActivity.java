@@ -22,6 +22,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -30,11 +32,13 @@ import android.widget.ToggleButton;
 
 import com.eric.autowifi.SmsRestoreService.MyBinder;
 import com.eric.autowifi.SmsRestoreService.SmsRestoreListener;
+import com.eric.profile.ProfileCatagoryActivity;
 
 @SuppressLint("HandlerLeak")
 public class MainActivity extends Activity {
 	public static final int UPDATE_SMS_BACKUP_TIME = 1;
 	private View lastBackupDateContainer;
+	private Button profileSettingBtn;
 	private TextView lastBackupDateTv;
 	private TextView restoreCompleted;
 	private TextView restoreTotal;
@@ -50,7 +54,7 @@ public class MainActivity extends Activity {
 			smsRestoreService.setSmsRestoreListener(new SmsRestoreListener() {
 				@Override
 				public void onSmsAlreadyExist() {
-					runOnUiThread(new Runnable(){
+					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							Toast.makeText(MainActivity.this,
@@ -61,17 +65,19 @@ public class MainActivity extends Activity {
 				}
 
 				@Override
-				public void onProgressChange(final int completed, final int total) {
+				public void onProgressChange(final int completed,
+						final int total) {
 					if (restoreCompleted != null) {
-						runOnUiThread(new Runnable(){
+						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								restoreCompleted.setText(String.valueOf(completed));
+								restoreCompleted.setText(String
+										.valueOf(completed));
 							}
 						});
 					}
 					if (restoreTotal != null) {
-						runOnUiThread(new Runnable(){
+						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
 								restoreTotal.setText(String.valueOf(total));
@@ -82,12 +88,12 @@ public class MainActivity extends Activity {
 
 				@Override
 				public void onRestoreAlreadyRunning() {
-					runOnUiThread(new Runnable(){
+					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							Toast.makeText(MainActivity.this,
-									R.string.restore_already_running, Toast.LENGTH_LONG)
-									.show();
+									R.string.restore_already_running,
+									Toast.LENGTH_LONG).show();
 						}
 					});
 				}
@@ -105,7 +111,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		// SmsBackup.clearLastBackupSMSTime(this);
 		// UpdateManager.doUpdate(this);
 
@@ -138,9 +144,11 @@ public class MainActivity extends Activity {
 		ToggleButton wifiAutoTb = (ToggleButton) findViewById(R.id.wifi_auto_management);
 		ToggleButton a2dpTb = (ToggleButton) findViewById(R.id.bluetootha2dp_auto_management);
 		final ToggleButton autoSyncSmsTb = (ToggleButton) findViewById(R.id.auto_sync_sms);
+		ToggleButton profileTb = (ToggleButton) findViewById(R.id.profile_switch);
 
 		wifiAutoTb.setChecked(Utils.getServiceToggle(this));
 		a2dpTb.setChecked(Utils.getBluetoothA2dpToggle(this));
+		profileTb.setChecked(Utils.getProfileToggle(this));
 		if (Utils.getGoogleAccount(this).length() > 0) {
 			autoSyncSmsTb.setChecked(Utils.getAutoSyncSmsToggle(this));
 		} else {
@@ -154,6 +162,8 @@ public class MainActivity extends Activity {
 
 		lastBackupDateContainer = findViewById(R.id.sms_sync_date_container);
 		initLastBackupDateContainer();
+		profileSettingBtn = (Button) findViewById(R.id.profile_setting);
+		initProfileSettingButton();
 
 		Utils.startAlarm(this,
 				Constants.MAINACTIVITY_TRIGGER_AFTER_MILLISECONDS,
@@ -227,6 +237,26 @@ public class MainActivity extends Activity {
 				}
 				initLastBackupDateContainer();
 				initBackupId();
+			}
+		});
+
+		profileSettingBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(MainActivity.this,
+						ProfileCatagoryActivity.class);
+				startActivity(i);
+			}
+		});
+		profileTb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				Utils.setProfileToggle(MainActivity.this, isChecked);
+				if (isChecked) {
+					profileSettingBtn.setVisibility(View.VISIBLE);
+				} else {
+					profileSettingBtn.setVisibility(View.GONE);
+				}
 			}
 		});
 
@@ -353,6 +383,14 @@ public class MainActivity extends Activity {
 			}
 		} else {
 			lastBackupDateContainer.setVisibility(View.GONE);
+		}
+	}
+	
+	private void initProfileSettingButton() {
+		if (profileSettingBtn != null && Utils.getProfileToggle(this)) {
+			profileSettingBtn.setVisibility(View.VISIBLE);
+		} else {
+			profileSettingBtn.setVisibility(View.GONE);
 		}
 	}
 

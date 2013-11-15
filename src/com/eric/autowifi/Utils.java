@@ -29,6 +29,7 @@ public class Utils {
 	private static final String KEY_SERVICE_TOGGLE = "service_toggle";
 	private static final String KEY_BLUETOOTHA2DP_TOGGLE = "bluetootha2dp_toggle";
 	private static final String KEY_AUTOSYNCSMS_TOGGLE = "autosyncsms_toggle";
+	private static final String KEY_PROFILE_TOGGLE = "profile_toggle";
 	private static final String LAST_TIMEINMILLISECONDS = "last_timeinmilliseconds";
 	private static final String LAST_LATITUDE = "last_latitude";
 	private static final String LAST_LONGITUDE = "last_longitude";
@@ -84,6 +85,16 @@ public class Utils {
 		} else {
 			getSharedPreferences(context).edit()
 					.putBoolean(KEY_SERVICE_TOGGLE, false).commit();
+		}
+	}
+
+	public static void setProfileToggle(Context context, boolean b) {
+		if (b) {
+			getSharedPreferences(context).edit()
+					.putBoolean(KEY_PROFILE_TOGGLE, true).commit();
+		} else {
+			getSharedPreferences(context).edit()
+					.putBoolean(KEY_PROFILE_TOGGLE, false).commit();
 		}
 	}
 
@@ -155,6 +166,11 @@ public class Utils {
 	public static boolean getServiceToggle(Context context) {
 		return getSharedPreferences(context).getBoolean(KEY_SERVICE_TOGGLE,
 				true);
+	}
+
+	public static boolean getProfileToggle(Context context) {
+		return getSharedPreferences(context).getBoolean(KEY_PROFILE_TOGGLE,
+				false);
 	}
 
 	public static boolean getBluetoothA2dpToggle(Context context) {
