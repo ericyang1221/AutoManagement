@@ -220,7 +220,6 @@ public class SmsBackup {
 		boolean isSuccess = false;
 		String json = getSMSInJSON(context, sbList, syncType, typeValue);
 		System.out.println(json);
-		SdLogger.logD(context, "sendBackupRequest", json);
 		HttpRequestHelper hrh = new HttpRequestHelper();
 		String url = "http://0.locationtracker.duapp.com/uploadSmses";
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -241,7 +240,6 @@ public class SmsBackup {
 				e.printStackTrace();
 			}
 		}
-		SdLogger.logD(context, "sendBackupRequest", String.valueOf(isSuccess));
 		return isSuccess;
 	}
 

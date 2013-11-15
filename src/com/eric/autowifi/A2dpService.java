@@ -66,10 +66,10 @@ public class A2dpService extends Service {
 											AudioManager.STREAM_MUSIC, volume,
 											0);
 									Log.d("BluetoothReceiver",
-											"MusicAudio set to 90%");
+											"MusicAudio set to 98%");
 									// TODO
 									Toast.makeText(context,
-											"MusicAudio set to 90%",
+											"MusicAudio set to 98%",
 											Toast.LENGTH_LONG).show();
 								}
 								break;
@@ -101,6 +101,7 @@ public class A2dpService extends Service {
 								break;
 							}
 						}
+						adapter.closeProfileProxy(BluetoothProfile.A2DP, proxy);
 					}
 				};
 				adapter.getProfileProxy(context, listener,

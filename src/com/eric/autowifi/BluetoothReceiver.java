@@ -20,7 +20,10 @@ public class BluetoothReceiver extends BroadcastReceiver {
 			System.out.println("ACTION_ACL_DISCONNECT_REQUESTED");
 		} else if (BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED.equals(action)
 				&& Utils.getBluetoothA2dpToggle(context)) {
+			BluetoothDevice device = intent
+					.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 			Intent i = new Intent(context, A2dpService.class);
+			i.putExtra(BluetoothDevice.EXTRA_DEVICE, device);
 			context.startService(i);
 		}
 	}
