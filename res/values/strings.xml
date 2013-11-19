@@ -25,5 +25,25 @@
     <string name="edit">编辑</string>
     <string name="profile">情景模式</string>
     <string name="setting">设置</string>
+    <string name="add">添加</string>
+    <string name="edit_profile">编辑情景模式：</string>
+    <string name="trigger">触发</string>
+    <string name="sounds">声音</string>
+    <string name="comm">通讯</string>
+    <string name="other">其他</string>
+    <string name="trigger_type">触发类型</string>
+    <string name="trigger_days_and_time">触发日期和时间</string>
+    <string name="ring_mode">响铃模式</string>
+    <string name="ring_volumn">响铃音量</string>
+    <string name="notification_mode">通知模式</string>
+    <string name="notification_volumn">通知音量</string>
+    <string name="wifi">Wifi</string>
+    <string name="gps">GPS</string>
+    <string name="bluetooth">蓝牙</string>
+    <string name="sync_date">自动同步</string>
+    <string name="profile_icon">情景图标</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="add_profile">添加情景模式</string>
 
 </resources>

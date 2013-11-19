@@ -46,6 +46,16 @@
             android:theme="@android:style/Theme.NoTitleBar"
              >
         </activity>
+        <activity
+            android:name="com.eric.profile.ProfileEditorActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+             >
+        </activity>
+        <activity
+            android:name="com.eric.profile.ProfileSettingActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+             >
+        </activity>
 
         <receiver android:name="com.eric.autowifi.WifiStateReceiver" >
             <intent-filter>
