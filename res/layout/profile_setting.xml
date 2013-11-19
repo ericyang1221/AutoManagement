@@ -1,0 +1,137 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/edit_profile"
+            android:textColor="#ff000000"
+            android:textSize="20dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginLeft="0dp"
+            android:background="@color/holo_blue_dark" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/ps_trigger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/trigger"
+                android:textColor="#ff000000"
+                android:textSize="18dp" />
+
+            <View
+                android:id="@+id/ps_trigger_mark"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginLeft="0dp"
+                android:background="@color/holo_blue_dark"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ps_sounds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/sounds"
+                android:textColor="#ff000000"
+                android:textSize="18dp" />
+
+            <View
+                android:id="@+id/ps_sounds_mark"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginLeft="0dp"
+                android:background="@color/holo_blue_dark"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ps_comm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/comm"
+                android:textColor="#ff000000"
+                android:textSize="18dp" />
+
+            <View
+                android:id="@+id/ps_comm_mark"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginLeft="0dp"
+                android:background="@color/holo_blue_dark"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ps_other"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/other"
+                android:textColor="#ff000000"
+                android:textSize="18dp" />
+
+            <View
+                android:id="@+id/ps_other_mark"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginLeft="0dp"
+                android:background="@color/holo_blue_dark"
+                android:visibility="invisible" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pfs_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1" >
+    </LinearLayout>
+
+</LinearLayout>
