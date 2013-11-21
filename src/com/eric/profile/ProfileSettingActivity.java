@@ -2,7 +2,6 @@ package com.eric.profile;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -102,24 +101,28 @@ public class ProfileSettingActivity extends FragmentActivity {
 
 	private void goTrigger() {
 		TriggerFragment triggerFragment = new TriggerFragment();
+		triggerFragment.setArguments(this.getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.pfs_main_layout, triggerFragment).commit();
 	}
 
 	private void goSounds() {
 		SoundsFragment soundsFragment = new SoundsFragment();
+		soundsFragment.setArguments(this.getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.pfs_main_layout, soundsFragment).commit();
 	}
 
 	private void goComm() {
 		CommFragment commFragment = new CommFragment();
+		commFragment.setArguments(this.getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.pfs_main_layout, commFragment).commit();
 	}
 
 	private void goOther() {
 		OtherFragment otherFragment = new OtherFragment();
+		otherFragment.setArguments(this.getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.pfs_main_layout, otherFragment).commit();
 	}

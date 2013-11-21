@@ -1,12 +1,29 @@
 package com.eric.profile.db;
 
+import java.io.Serializable;
+
 import com.eric.autowifi.R;
 
-public class ProfileBean {
+public class ProfileBean implements Serializable {
+	public static final int TRIGGER_TYPE_MANUAL_OR_TIME = 0;
+	public static final int TRIGGER_TYPE_WIFI = 1;
+	public static final int NO_CHANGE = 0;
+	public static final int SOUND_RING = 1;
+	public static final int SOUND_RING_AND_VIBRATE = 2;
+	public static final int SOUND_VIBRATE = 3;
+	public static final int SOUND_SILENT = 4;
+	public static final int VOLUMN_NO_CHANGE = -1;
+	public static final int COMM_ON = 1;
+	public static final int COMM_OFF = 2;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private String profileName;
 	private int profileIcon;
 	private int triggerType;
+	private String triggeredWifi;
 	private String triggerDate1;
 	private String triggerDate2;
 	private String triggerDate3;
@@ -42,7 +59,7 @@ public class ProfileBean {
 	}
 
 	public ProfileBean(int id, String profileName, int profileIcon,
-			int triggerType, String triggerDate1, String triggerDate2,
+			int triggerType,String triggeredWifi, String triggerDate1, String triggerDate2,
 			String triggerDate3, String triggerDate4, int ringMode,
 			int ringVolumn, int notificationMode, int notificationVolumn,
 			int wifi, int gps, int bluetooth, int syncData) {
@@ -50,6 +67,7 @@ public class ProfileBean {
 		this.profileName = profileName;
 		this.profileIcon = profileIcon;
 		this.triggerType = triggerType;
+		this.triggeredWifi = triggeredWifi;
 		this.triggerDate1 = triggerDate1;
 		this.triggerDate2 = triggerDate2;
 		this.triggerDate3 = triggerDate3;
@@ -190,6 +208,14 @@ public class ProfileBean {
 
 	public void setSyncData(int syncData) {
 		this.syncData = syncData;
+	}
+
+	public String getTriggeredWifi() {
+		return triggeredWifi;
+	}
+
+	public void setTriggeredWifi(String triggeredWifi) {
+		this.triggeredWifi = triggeredWifi;
 	}
 
 }

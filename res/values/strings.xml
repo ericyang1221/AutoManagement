@@ -45,5 +45,25 @@
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
     <string name="add_profile">添加情景模式</string>
+    <string name="info">提示</string>
+    <string name="sure_to_delete">确定要删除？</string>
+    <string name="trigger_wifi">Wifi连接至</string>
+    <string name="wifi_trigger">Wifi触发</string>
+    <string name="please_open_wifi">请打开Wifi开关</string>
+    <string name="manual_or_time_trigger">手动或时间触发</string>
+    <string name="time_trigger">触发时间：</string>
+    <string name="mon">周一</string>
+    <string name="tue">周二</string>
+    <string name="wed">周三</string>
+    <string name="thu">周四</string>
+    <string name="fri">周五</string>
+    <string name="sat">周六</string>
+    <string name="sun">周日</string>
+    <string name="no_change">不变</string>
+    <string name="sound">声音</string>
+    <string name="vibrate">震动</string>
+    <string name="sound_and_vibrate">声音和震动</string>
+    <string name="silent">静音</string>
+    
 
 </resources>

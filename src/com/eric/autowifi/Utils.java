@@ -13,6 +13,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
 import android.net.wifi.WifiInfo;
@@ -407,5 +408,10 @@ public class Utils {
 
 	public static String getAppFolder(Context context) {
 		return getAppName(context);
+	}
+
+	public static int getRingerMode(Context context) {
+		AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		return audio.getRingerMode();
 	}
 }

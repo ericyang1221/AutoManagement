@@ -3,32 +3,39 @@ package com.eric.profile;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.eric.autowifi.MyApplication;
 import com.eric.autowifi.R;
 import com.eric.profile.db.ProfileBean;
 import com.eric.profile.db.ProfileDB;
 
 public class ProfileEditorActivity extends Activity {
 	private ProfileEditorListViewAdapter adapter;
+	private ProfileDB pdb;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile_editor);
+		pdb = ((MyApplication) this.getApplication()).getProfileDB();
 		initTitleBar();
 		initListView();
 	}
@@ -40,7 +47,6 @@ public class ProfileEditorActivity extends Activity {
 			@Override
 			public void onOkClick(Dialog dialog, String profileName) {
 				ProfileBean pb = new ProfileBean(profileName);
-				ProfileDB pdb = new ProfileDB(ProfileEditorActivity.this);
 				pdb.insert(pb);
 				adapter.updateData();
 				adapter.notifyDataSetChanged();
@@ -67,20 +73,51 @@ public class ProfileEditorActivity extends Activity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View v, int arg2,
 					long arg3) {
-				// TODO Auto-generated method stub
-
+				Intent i = new Intent(ProfileEditorActivity.this,
+						ProfileSettingActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("profileBean",
+						(ProfileBean) v.getTag(R.id.profile_bean));
+				i.putExtras(bundle);
+				startActivity(i);
 			}
 
 		});
-		lv.setOnLongClickListener(new OnLongClickListener(){
+		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
+
 			@Override
-			public boolean onLongClick(View v) {
-				ViewHolder holder = (ViewHolder)v.getTag();
-				int id = holder.id;
+			public boolean onItemLongClick(AdapterView<?> arg0, final View v,
+					int arg2, long arg3) {
+				AlertDialog.Builder builder = new Builder(
+						ProfileEditorActivity.this);
+				builder.setMessage(getString(R.string.sure_to_delete));
+				builder.setTitle(getString(R.string.info));
+				builder.setPositiveButton(R.string.ok,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								ViewHolder holder = (ViewHolder) v.getTag();
+								int id = holder.id;
+								pdb.deleteProfileById(id);
+								adapter.updateData();
+								adapter.notifyDataSetChanged();
+							}
+						});
+				builder.setNegativeButton(R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
+							}
+						});
+				builder.create().show();
 				return true;
 			}
+
 		});
 	}
 
@@ -102,11 +139,9 @@ public class ProfileEditorActivity extends Activity {
 	}
 
 	class ProfileEditorListViewAdapter extends BaseAdapter {
-		private ProfileDB pdb;
 		private List<ProfileBean> pbList;
 
 		public ProfileEditorListViewAdapter() {
-			pdb = new ProfileDB(ProfileEditorActivity.this);
 			updateData();
 		}
 
@@ -153,6 +188,7 @@ public class ProfileEditorActivity extends Activity {
 			holder.title.setText(pb.getProfileName());
 			holder.desc.setText("test");
 			holder.id = pb.getId();
+			convertView.setTag(R.id.profile_bean, pb);
 			return convertView;
 		}
 

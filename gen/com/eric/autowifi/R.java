@@ -8,10 +8,15 @@
 package com.eric.autowifi;
 
 public final class R {
+    public static final class array {
+        public static final int comm_switch=0x7f040002;
+        public static final int ringer_modes=0x7f040001;
+        public static final int trigger_types=0x7f040000;
+    }
     public static final class attr {
     }
     public static final class color {
-        public static final int holo_blue_dark=0x7f040000;
+        public static final int holo_blue_dark=0x7f050000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -20,75 +25,94 @@ public final class R {
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f050000;
-        public static final int activity_vertical_margin=0x7f050001;
+        public static final int activity_horizontal_margin=0x7f060000;
+        public static final int activity_vertical_margin=0x7f060001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int fragment_item_selector=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f09003d;
-        public static final int apd_cancel=0x7f09000e;
-        public static final int apd_ok=0x7f09000d;
-        public static final int apd_profile_name=0x7f09000c;
-        public static final int auto_sync_sms=0x7f090004;
-        public static final int backup_id=0x7f090006;
-        public static final int bluetootha2dp_auto_management=0x7f090001;
-        public static final int cf_bluetooth=0x7f090013;
-        public static final int cf_bluetooth_text=0x7f090014;
-        public static final int cf_gps=0x7f090011;
-        public static final int cf_gps_text=0x7f090012;
-        public static final int cf_sync_date=0x7f090015;
-        public static final int cf_sync_date_text=0x7f090016;
-        public static final int cf_wifi=0x7f09000f;
-        public static final int cf_wifi_text=0x7f090010;
-        public static final int pc_lv=0x7f090019;
-        public static final int pci_desc=0x7f09001c;
-        public static final int pci_icon=0x7f09001a;
-        public static final int pci_title=0x7f09001b;
-        public static final int pe_add=0x7f09001d;
-        public static final int pe_lv=0x7f09001e;
-        public static final int pei_desc=0x7f090020;
-        public static final int pei_icon=0x7f090021;
-        public static final int pei_title=0x7f09001f;
-        public static final int pfs_main_layout=0x7f09002a;
-        public static final int profile_edit=0x7f090018;
-        public static final int profile_setting=0x7f090003;
-        public static final int profile_switch=0x7f090002;
-        public static final int ps_comm=0x7f090026;
-        public static final int ps_comm_mark=0x7f090027;
-        public static final int ps_other=0x7f090028;
-        public static final int ps_other_mark=0x7f090029;
-        public static final int ps_sounds=0x7f090024;
-        public static final int ps_sounds_mark=0x7f090025;
-        public static final int ps_trigger=0x7f090022;
-        public static final int ps_trigger_mark=0x7f090023;
-        public static final int restore_completed=0x7f09000a;
-        public static final int restore_sms_immediatly=0x7f090009;
-        public static final int restore_total=0x7f09000b;
-        public static final int sf_notification_mode=0x7f09002f;
-        public static final int sf_notification_mode_text=0x7f090030;
-        public static final int sf_notification_volumn=0x7f090031;
-        public static final int sf_notification_volumn_text=0x7f090032;
-        public static final int sf_ring_mode=0x7f09002b;
-        public static final int sf_ring_mode_text=0x7f09002c;
-        public static final int sf_ring_volumn=0x7f09002d;
-        public static final int sf_ring_volumn_text=0x7f09002e;
-        public static final int sms_sync_date=0x7f090007;
-        public static final int sms_sync_date_container=0x7f090005;
-        public static final int sync_sms_immediatly=0x7f090008;
-        public static final int tf_trigger_days_and_time1=0x7f090035;
-        public static final int tf_trigger_days_and_time2=0x7f090037;
-        public static final int tf_trigger_days_and_time3=0x7f090039;
-        public static final int tf_trigger_days_and_time4=0x7f09003b;
-        public static final int tf_trigger_days_and_time_text1=0x7f090036;
-        public static final int tf_trigger_days_and_time_text2=0x7f090038;
-        public static final int tf_trigger_days_and_time_text3=0x7f09003a;
-        public static final int tf_trigger_days_and_time_text4=0x7f09003c;
-        public static final int tf_trigger_type=0x7f090033;
-        public static final int tf_trigger_type_text=0x7f090034;
-        public static final int title_icon=0x7f090017;
-        public static final int wifi_auto_management=0x7f090000;
+        public static final int action_settings=0x7f07004f;
+        public static final int apd_cancel=0x7f07000f;
+        public static final int apd_ok=0x7f07000e;
+        public static final int apd_profile_name=0x7f07000d;
+        public static final int auto_sync_sms=0x7f070005;
+        public static final int backup_id=0x7f070007;
+        public static final int bluetootha2dp_auto_management=0x7f070002;
+        public static final int cf_bluetooth=0x7f070014;
+        public static final int cf_bluetooth_text=0x7f070015;
+        public static final int cf_gps=0x7f070012;
+        public static final int cf_gps_text=0x7f070013;
+        public static final int cf_sync_date=0x7f070016;
+        public static final int cf_sync_date_text=0x7f070017;
+        public static final int cf_wifi=0x7f070010;
+        public static final int cf_wifi_text=0x7f070011;
+        public static final int pc_lv=0x7f07001a;
+        public static final int pci_desc=0x7f07001d;
+        public static final int pci_icon=0x7f07001b;
+        public static final int pci_title=0x7f07001c;
+        public static final int pe_add=0x7f07001e;
+        public static final int pe_lv=0x7f07001f;
+        public static final int pei_desc=0x7f070021;
+        public static final int pei_icon=0x7f070022;
+        public static final int pei_title=0x7f070020;
+        public static final int pfs_main_layout=0x7f07002b;
+        public static final int profile_bean=0x7f070000;
+        public static final int profile_edit=0x7f070019;
+        public static final int profile_setting=0x7f070004;
+        public static final int profile_switch=0x7f070003;
+        public static final int ps_comm=0x7f070027;
+        public static final int ps_comm_mark=0x7f070028;
+        public static final int ps_other=0x7f070029;
+        public static final int ps_other_mark=0x7f07002a;
+        public static final int ps_sounds=0x7f070025;
+        public static final int ps_sounds_mark=0x7f070026;
+        public static final int ps_trigger=0x7f070023;
+        public static final int ps_trigger_mark=0x7f070024;
+        public static final int restore_completed=0x7f07000b;
+        public static final int restore_sms_immediatly=0x7f07000a;
+        public static final int restore_total=0x7f07000c;
+        public static final int sf_notification_mode=0x7f070035;
+        public static final int sf_notification_mode_text=0x7f070036;
+        public static final int sf_notification_volumn=0x7f070037;
+        public static final int sf_notification_volumn_text=0x7f070038;
+        public static final int sf_ring_mode=0x7f070031;
+        public static final int sf_ring_mode_text=0x7f070032;
+        public static final int sf_ring_volumn=0x7f070033;
+        public static final int sf_ring_volumn_text=0x7f070034;
+        public static final int sms_sync_date=0x7f070008;
+        public static final int sms_sync_date_container=0x7f070006;
+        public static final int sv_cancel=0x7f070030;
+        public static final int sv_nochange=0x7f07002c;
+        public static final int sv_ok=0x7f07002f;
+        public static final int sv_progress=0x7f07002d;
+        public static final int sv_seekbar=0x7f07002e;
+        public static final int sync_sms_immediatly=0x7f070009;
+        public static final int tf_trigger_days_and_time1=0x7f070045;
+        public static final int tf_trigger_days_and_time2=0x7f070047;
+        public static final int tf_trigger_days_and_time3=0x7f070049;
+        public static final int tf_trigger_days_and_time4=0x7f07004b;
+        public static final int tf_trigger_days_and_time_text1=0x7f070046;
+        public static final int tf_trigger_days_and_time_text2=0x7f070048;
+        public static final int tf_trigger_days_and_time_text3=0x7f07004a;
+        public static final int tf_trigger_days_and_time_text4=0x7f07004c;
+        public static final int tf_trigger_type=0x7f070043;
+        public static final int tf_trigger_type_text=0x7f070044;
+        public static final int tf_trigger_wifi=0x7f07004d;
+        public static final int tf_trigger_wifi_text=0x7f07004e;
+        public static final int title_icon=0x7f070018;
+        public static final int ttd_tp=0x7f070039;
+        public static final int ttf_fri=0x7f07003e;
+        public static final int ttf_mon=0x7f07003a;
+        public static final int ttf_sat=0x7f07003f;
+        public static final int ttf_sun=0x7f070040;
+        public static final int ttf_thu=0x7f07003d;
+        public static final int ttf_tue=0x7f07003b;
+        public static final int ttf_wed=0x7f07003c;
+        public static final int ttp_cancel=0x7f070042;
+        public static final int ttp_ok=0x7f070041;
+        public static final int wifi_auto_management=0x7f070001;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -100,57 +124,78 @@ public final class R {
         public static final int profile_editor=0x7f030006;
         public static final int profile_editor_item=0x7f030007;
         public static final int profile_setting=0x7f030008;
-        public static final int sounds_fragment=0x7f030009;
-        public static final int trigger_fragment=0x7f03000a;
+        public static final int set_volumn_dialog=0x7f030009;
+        public static final int sounds_fragment=0x7f03000a;
+        public static final int time_trigger_dialog=0x7f03000b;
+        public static final int trigger_fragment=0x7f03000c;
     }
     public static final class menu {
-        public static final int main=0x7f080000;
+        public static final int main=0x7f0a0000;
     }
     public static final class string {
-        public static final int action_settings=0x7f060001;
-        public static final int add=0x7f060018;
-        public static final int add_profile=0x7f06002b;
-        public static final int already_the_newest=0x7f06000e;
-        public static final int app_name=0x7f060000;
-        public static final int auto_sync_sms=0x7f060006;
-        public static final int backup_id=0x7f060010;
-        public static final int bluetooth=0x7f060026;
-        public static final int bluetootha2dp_auto_management=0x7f060003;
-        public static final int cancel=0x7f06002a;
-        public static final int clear_your_local_sms_first=0x7f060011;
-        public static final int comm=0x7f06001c;
-        public static final int edit=0x7f060015;
-        public static final int edit_profile=0x7f060019;
-        public static final int gps=0x7f060025;
-        public static final int introduce_a2dp=0x7f060009;
-        public static final int introduce_sms_backup=0x7f060013;
-        public static final int introduce_wifi=0x7f060008;
-        public static final int last_backup_date=0x7f060007;
-        public static final int myphone_error=0x7f06000b;
-        public static final int no_backup_id=0x7f060014;
-        public static final int notice=0x7f06000a;
-        public static final int notification_mode=0x7f060022;
-        public static final int notification_volumn=0x7f060023;
-        public static final int off=0x7f060005;
-        public static final int ok=0x7f060029;
-        public static final int on=0x7f060004;
-        public static final int other=0x7f06001d;
-        public static final int profile=0x7f060016;
-        public static final int profile_icon=0x7f060028;
-        public static final int restore_already_running=0x7f060012;
-        public static final int restore_sms_immediatly=0x7f06000d;
-        public static final int ring_mode=0x7f060020;
-        public static final int ring_volumn=0x7f060021;
-        public static final int setting=0x7f060017;
-        public static final int slash=0x7f06000f;
-        public static final int sounds=0x7f06001b;
-        public static final int sync_date=0x7f060027;
-        public static final int sync_sms_immediatly=0x7f06000c;
-        public static final int trigger=0x7f06001a;
-        public static final int trigger_days_and_time=0x7f06001f;
-        public static final int trigger_type=0x7f06001e;
-        public static final int wifi=0x7f060024;
-        public static final int wifi_auto_management=0x7f060002;
+        public static final int action_settings=0x7f080001;
+        public static final int add=0x7f080018;
+        public static final int add_profile=0x7f08002b;
+        public static final int already_the_newest=0x7f08000e;
+        public static final int app_name=0x7f080000;
+        public static final int auto_sync_sms=0x7f080006;
+        public static final int backup_id=0x7f080010;
+        public static final int bluetooth=0x7f080026;
+        public static final int bluetootha2dp_auto_management=0x7f080003;
+        public static final int cancel=0x7f08002a;
+        public static final int clear_your_local_sms_first=0x7f080011;
+        public static final int comm=0x7f08001c;
+        public static final int edit=0x7f080015;
+        public static final int edit_profile=0x7f080019;
+        public static final int fri=0x7f080037;
+        public static final int gps=0x7f080025;
+        public static final int info=0x7f08002c;
+        public static final int introduce_a2dp=0x7f080009;
+        public static final int introduce_sms_backup=0x7f080013;
+        public static final int introduce_wifi=0x7f080008;
+        public static final int last_backup_date=0x7f080007;
+        public static final int manual_or_time_trigger=0x7f080031;
+        public static final int mon=0x7f080033;
+        public static final int myphone_error=0x7f08000b;
+        public static final int no_backup_id=0x7f080014;
+        public static final int no_change=0x7f08003a;
+        public static final int notice=0x7f08000a;
+        public static final int notification_mode=0x7f080022;
+        public static final int notification_volumn=0x7f080023;
+        public static final int off=0x7f080005;
+        public static final int ok=0x7f080029;
+        public static final int on=0x7f080004;
+        public static final int other=0x7f08001d;
+        public static final int please_open_wifi=0x7f080030;
+        public static final int profile=0x7f080016;
+        public static final int profile_icon=0x7f080028;
+        public static final int restore_already_running=0x7f080012;
+        public static final int restore_sms_immediatly=0x7f08000d;
+        public static final int ring_mode=0x7f080020;
+        public static final int ring_volumn=0x7f080021;
+        public static final int sat=0x7f080038;
+        public static final int setting=0x7f080017;
+        public static final int silent=0x7f08003e;
+        public static final int slash=0x7f08000f;
+        public static final int sound=0x7f08003b;
+        public static final int sound_and_vibrate=0x7f08003d;
+        public static final int sounds=0x7f08001b;
+        public static final int sun=0x7f080039;
+        public static final int sure_to_delete=0x7f08002d;
+        public static final int sync_date=0x7f080027;
+        public static final int sync_sms_immediatly=0x7f08000c;
+        public static final int thu=0x7f080036;
+        public static final int time_trigger=0x7f080032;
+        public static final int trigger=0x7f08001a;
+        public static final int trigger_days_and_time=0x7f08001f;
+        public static final int trigger_type=0x7f08001e;
+        public static final int trigger_wifi=0x7f08002e;
+        public static final int tue=0x7f080034;
+        public static final int vibrate=0x7f08003c;
+        public static final int wed=0x7f080035;
+        public static final int wifi=0x7f080024;
+        public static final int wifi_auto_management=0x7f080002;
+        public static final int wifi_trigger=0x7f08002f;
     }
     public static final class style {
         /** 
@@ -174,10 +219,10 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f070001;
+        public static final int AppTheme=0x7f090001;
     }
 }
