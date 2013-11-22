@@ -1,6 +1,8 @@
 package com.eric.autowifi;
 
+import java.lang.reflect.Type;
 import java.util.Calendar;
+import java.util.List;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -24,6 +26,9 @@ import android.util.Log;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.eric.profile.db.ProfileBean;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class Utils {
 	private static final double EARTH_RADIUS = 6378137.0;
@@ -39,6 +44,7 @@ public class Utils {
 	private static final String HAS_UPLOAD_CONTACTS = "has_u_cts";
 	private static final String LAST_CHECKUPDATE_TIME = "last_checkupdate_time";
 	private static final String APP_INFO = "app_info";
+	private static final String CURRENT_PROFILE_ID = "current_profile_id";
 	private static SharedPreferences appInfo;
 	private static TelephonyManager telephonyManager;
 	private static String imei;
@@ -142,6 +148,16 @@ public class Utils {
 
 	public static boolean getFirstOpenFlag(Context context) {
 		return getSharedPreferences(context).getBoolean(FIRST_OPEN_FLAG, true);
+	}
+
+	public static void setCurrentProfileId(Context context, int id) {
+		getSharedPreferences(context).edit().putInt(CURRENT_PROFILE_ID, id)
+				.commit();
+	}
+
+	public static int getCurrentProfileId(Context context) {
+		return getSharedPreferences(context).getInt(CURRENT_PROFILE_ID,
+				ProfileBean.DEFAULT_PROFILE_ID);
 	}
 
 	public static int getLastSpeed(Context context) {
@@ -411,7 +427,29 @@ public class Utils {
 	}
 
 	public static int getRingerMode(Context context) {
-		AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		AudioManager audio = (AudioManager) context
+				.getSystemService(Context.AUDIO_SERVICE);
 		return audio.getRingerMode();
+	}
+
+	public static String formatProfileWifiName(List<String> selectedList) {
+		if (selectedList != null) {
+			StringBuffer sb = new StringBuffer();
+			for (String s : selectedList) {
+				sb.append(s.substring(1, s.length() - 1)).append(",");
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			return sb.toString();
+		} else {
+			return "";
+		}
+	}
+
+	public static String formatProfileWifiName(String wifiNames) {
+		Gson gson = new Gson();
+		Type type = new TypeToken<List<String>>() {
+		}.getType();
+		List<String> selectedList = gson.fromJson(wifiNames, type);
+		return formatProfileWifiName(selectedList);
 	}
 }

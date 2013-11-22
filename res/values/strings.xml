@@ -64,6 +64,7 @@
     <string name="vibrate">震动</string>
     <string name="sound_and_vibrate">声音和震动</string>
     <string name="silent">静音</string>
-    
+    <string name="rename">重命名</string>
+    <string name="delete">删除</string>
 
 </resources>

@@ -16,6 +16,7 @@
             android:id="@+id/cf_wifi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/fragment_item_selector"
             android:orientation="vertical" >
 
             <TextView
@@ -29,7 +30,6 @@
                 android:id="@+id/cf_wifi_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manual"
                 android:textColor="#666666"
                 android:textSize="12dp" />
 
@@ -45,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:background="@drawable/fragment_item_selector"
             android:orientation="vertical" >
 
             <TextView
@@ -58,7 +59,6 @@
                 android:id="@+id/cf_gps_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manual"
                 android:textColor="#666666"
                 android:textSize="12dp" />
 
@@ -74,6 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:background="@drawable/fragment_item_selector"
             android:orientation="vertical" >
 
             <TextView
@@ -87,7 +88,6 @@
                 android:id="@+id/cf_bluetooth_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manual"
                 android:textColor="#666666"
                 android:textSize="12dp" />
 
@@ -103,6 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:background="@drawable/fragment_item_selector"
             android:orientation="vertical" >
 
             <TextView
@@ -116,7 +117,6 @@
                 android:id="@+id/cf_sync_date_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manual"
                 android:textColor="#666666"
                 android:textSize="12dp" />
 
@@ -126,8 +126,6 @@
                 android:layout_marginTop="5dp"
                 android:background="#99999999" />
         </LinearLayout>
-
-        
     </LinearLayout>
 
 </ScrollView>

@@ -40,9 +40,18 @@ public class ProfileEditorActivity extends Activity {
 		initListView();
 	}
 
+	@Override
+	protected void onResume() {
+		if (adapter != null) {
+			adapter.updateData();
+			adapter.notifyDataSetChanged();
+		}
+		super.onResume();
+	}
+
 	private void initTitleBar() {
 		final AddProfileDialog dialog = new AddProfileDialog(
-				ProfileEditorActivity.this);
+				ProfileEditorActivity.this,null);
 		dialog.setOnClickListener(new AddProfileDialog.OnClickListener() {
 			@Override
 			public void onOkClick(Dialog dialog, String profileName) {
@@ -90,35 +99,82 @@ public class ProfileEditorActivity extends Activity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, final View v,
 					int arg2, long arg3) {
-				AlertDialog.Builder builder = new Builder(
-						ProfileEditorActivity.this);
-				builder.setMessage(getString(R.string.sure_to_delete));
-				builder.setTitle(getString(R.string.info));
-				builder.setPositiveButton(R.string.ok,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								ViewHolder holder = (ViewHolder) v.getTag();
-								int id = holder.id;
-								pdb.deleteProfileById(id);
-								adapter.updateData();
-								adapter.notifyDataSetChanged();
-							}
-						});
-				builder.setNegativeButton(R.string.cancel,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.dismiss();
-							}
-						});
-				builder.create().show();
+				ViewHolder holder = (ViewHolder) v.getTag();
+				new AlertDialog.Builder(ProfileEditorActivity.this)
+						.setTitle(holder.title.getText().toString())
+						.setItems(
+								new String[] { getString(R.string.rename),
+										getString(R.string.delete) },
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										switch (which) {
+										case 0:
+											showRenameDialog(v);
+											break;
+										case 1:
+											showDeleteDialog(v);
+											break;
+										default:
+											break;
+										}
+										dialog.dismiss();
+									}
+								}).show();
 				return true;
 			}
 
 		});
+	}
+
+	private void showDeleteDialog(final View v) {
+		AlertDialog.Builder builder = new Builder(ProfileEditorActivity.this);
+		builder.setMessage(getString(R.string.sure_to_delete));
+		builder.setTitle(getString(R.string.info));
+		builder.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						ViewHolder holder = (ViewHolder) v.getTag();
+						int id = holder.id;
+						pdb.deleteProfileById(id);
+						adapter.updateData();
+						adapter.notifyDataSetChanged();
+					}
+				});
+		builder.setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+		builder.create().show();
+	}
+
+	private void showRenameDialog(final View v) {
+		final ProfileBean pb = (ProfileBean) v.getTag(R.id.profile_bean);
+		if (pb != null) {
+			final AddProfileDialog dialog = new AddProfileDialog(
+					ProfileEditorActivity.this, pb.getProfileName());
+			dialog.setOnClickListener(new AddProfileDialog.OnClickListener() {
+				@Override
+				public void onOkClick(Dialog dialog, String profileName) {
+					pb.setProfileName(profileName);
+					pdb.update(pb);
+					adapter.updateData();
+					adapter.notifyDataSetChanged();
+					dialog.dismiss();
+				}
+
+				@Override
+				public void onCancelClick(Dialog dialog) {
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
+		}
 	}
 
 	@Override
@@ -186,7 +242,13 @@ public class ProfileEditorActivity extends Activity {
 			}
 			holder.icon.setImageResource(pb.getProfileIcon());
 			holder.title.setText(pb.getProfileName());
-			holder.desc.setText("test");
+			if (ProfileBean.TRIGGER_TYPE_MANUAL_OR_TIME == pb.getTriggerType()) {
+				holder.desc.setText(R.string.manual_or_time_trigger);
+			} else if (ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
+				holder.desc.setText(R.string.wifi_trigger);
+			} else {
+				holder.desc.setText("");
+			}
 			holder.id = pb.getId();
 			convertView.setTag(R.id.profile_bean, pb);
 			return convertView;

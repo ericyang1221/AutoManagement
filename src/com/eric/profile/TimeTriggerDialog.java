@@ -46,25 +46,25 @@ public class TimeTriggerDialog extends Dialog {
 				for (String s : checked) {
 					if (MON.equals(s)) {
 						isMonChecked = true;
-						break;
+						continue;
 					} else if (TUE.equals(s)) {
 						isTueChecked = true;
-						break;
+						continue;
 					} else if (WED.equals(s)) {
 						isWedChecked = true;
-						break;
+						continue;
 					} else if (THU.equals(s)) {
 						isThuChecked = true;
-						break;
+						continue;
 					} else if (FRI.equals(s)) {
 						isFriChecked = true;
-						break;
+						continue;
 					} else if (SAT.equals(s)) {
 						isSatChecked = true;
-						break;
+						continue;
 					} else if (SUN.equals(s)) {
 						isSunChecked = true;
-						break;
+						continue;
 					}
 				}
 				if (time.length > 1) {

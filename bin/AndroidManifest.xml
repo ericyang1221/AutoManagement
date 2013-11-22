@@ -41,21 +41,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name="com.eric.profile.ProfileCatagoryActivity"
-            android:theme="@android:style/Theme.NoTitleBar"
-             >
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.eric.profile.ProfileEditorActivity"
-            android:theme="@android:style/Theme.NoTitleBar"
-             >
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.eric.profile.ProfileSettingActivity"
-            android:theme="@android:style/Theme.NoTitleBar"
-             >
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
 
         <receiver android:name="com.eric.autowifi.WifiStateReceiver" >
@@ -142,6 +138,10 @@
         </service>
         <service
             android:name=".A2dpService"
+            android:exported="true" >
+        </service>
+        <service
+            android:name="com.eric.profile.ProfileService"
             android:exported="true" >
         </service>
 

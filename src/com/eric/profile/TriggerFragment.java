@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eric.autowifi.R;
+import com.eric.autowifi.Utils;
 import com.eric.profile.db.ProfileBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -165,30 +166,37 @@ public class TriggerFragment extends AutoManagementFragment {
 					boolean isSunChecked) {
 				StringBuffer sb = new StringBuffer();
 				if (isMonChecked) {
-					sb.append(TimeTriggerDialog.MON).append(TimeTriggerDialog.SP);
+					sb.append(TimeTriggerDialog.MON).append(
+							TimeTriggerDialog.SP);
 				}
 				if (isTueChecked) {
-					sb.append(TimeTriggerDialog.TUE).append(TimeTriggerDialog.SP);
+					sb.append(TimeTriggerDialog.TUE).append(
+							TimeTriggerDialog.SP);
 				}
 				if (isWedChecked) {
-					sb.append(TimeTriggerDialog.WED).append(TimeTriggerDialog.SP);
+					sb.append(TimeTriggerDialog.WED).append(
+							TimeTriggerDialog.SP);
 				}
 				if (isThuChecked) {
-					sb.append(TimeTriggerDialog.THU).append(TimeTriggerDialog.SP);
+					sb.append(TimeTriggerDialog.THU).append(
+							TimeTriggerDialog.SP);
 				}
 				if (isFriChecked) {
-					sb.append(TimeTriggerDialog.FRI).append(TimeTriggerDialog.SP);
+					sb.append(TimeTriggerDialog.FRI).append(
+							TimeTriggerDialog.SP);
 				}
 				if (isSatChecked) {
-					sb.append(TimeTriggerDialog.SAT).append(TimeTriggerDialog.SP);
+					sb.append(TimeTriggerDialog.SAT).append(
+							TimeTriggerDialog.SP);
 				}
 				if (isSunChecked) {
-					sb.append(TimeTriggerDialog.SUN).append(TimeTriggerDialog.SP);
+					sb.append(TimeTriggerDialog.SUN).append(
+							TimeTriggerDialog.SP);
 				}
 				if (sb.length() > 0) {
 					sb.deleteCharAt(sb.length() - 1);
 					sb.append(" ").append(hourOfDay).append(":").append(minute);
-				}else{
+				} else {
 					sb.setLength(0);
 				}
 				switch (which) {
@@ -255,7 +263,7 @@ public class TriggerFragment extends AutoManagementFragment {
 								pb.setTriggeredWifi(triggeredWifi);
 								pdb.update(pb);
 								triggerWifiText
-										.setText(formatListGson(selectedList));
+										.setText(Utils.formatProfileWifiName(selectedList));
 							}
 						}).show();
 	}
@@ -314,7 +322,7 @@ public class TriggerFragment extends AutoManagementFragment {
 						}
 					}
 				}
-				triggerWifiText.setText(formatListGson(selectedList));
+				triggerWifiText.setText(Utils.formatProfileWifiName(selectedList));
 			}
 		} else {
 			which = 0;
@@ -323,14 +331,5 @@ public class TriggerFragment extends AutoManagementFragment {
 			pb.setTriggerType(which);
 			pdb.update(pb);
 		}
-	}
-
-	private String formatListGson(List<String> selectedList) {
-		StringBuffer sb = new StringBuffer();
-		for (String s : selectedList) {
-			sb.append(s.substring(1, s.length() - 1)).append(",");
-		}
-		sb.deleteCharAt(sb.length() - 1);
-		return sb.toString();
 	}
 }

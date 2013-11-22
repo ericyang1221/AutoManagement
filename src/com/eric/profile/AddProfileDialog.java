@@ -10,14 +10,16 @@ import com.eric.autowifi.R;
 
 public class AddProfileDialog extends Dialog {
 	private OnClickListener onClickListener;
+	private String profileName = null;
 
 	protected AddProfileDialog(Context context, boolean cancelable,
 			OnCancelListener cancelListener) {
 		super(context, cancelable, cancelListener);
 	}
 
-	public AddProfileDialog(Context context) {
+	public AddProfileDialog(Context context, String profileName) {
 		super(context);
+		this.profileName = profileName;
 	}
 
 	@Override
@@ -27,13 +29,16 @@ public class AddProfileDialog extends Dialog {
 		this.setTitle(R.string.add_profile);
 
 		final EditText et = (EditText) findViewById(R.id.apd_profile_name);
-
+		if (profileName != null) {
+			et.setText(profileName);
+		}
 		findViewById(R.id.apd_ok).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						if (onClickListener != null) {
-							onClickListener.onOkClick(AddProfileDialog.this,et.getText().toString());
+							onClickListener.onOkClick(AddProfileDialog.this, et
+									.getText().toString());
 						}
 					}
 				});
@@ -42,7 +47,8 @@ public class AddProfileDialog extends Dialog {
 					@Override
 					public void onClick(View v) {
 						if (onClickListener != null) {
-							onClickListener.onCancelClick(AddProfileDialog.this);
+							onClickListener
+									.onCancelClick(AddProfileDialog.this);
 						}
 					}
 				});
@@ -53,7 +59,7 @@ public class AddProfileDialog extends Dialog {
 	}
 
 	public interface OnClickListener {
-		void onOkClick(Dialog dialog,String profileName);
+		void onOkClick(Dialog dialog, String profileName);
 
 		void onCancelClick(Dialog dialog);
 	}

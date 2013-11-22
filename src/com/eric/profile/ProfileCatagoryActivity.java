@@ -3,8 +3,12 @@ package com.eric.profile;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -18,10 +22,29 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.eric.autowifi.R;
+import com.eric.profile.ProfileService.MyBinder;
 import com.eric.profile.db.ProfileBean;
 import com.eric.profile.db.ProfileDB;
 
 public class ProfileCatagoryActivity extends Activity {
+	ProfileCatagoryListViewAdapter adapter;
+	private ProfileService profileService;
+	private boolean mBound = false;
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			MyBinder binder = (MyBinder) service;
+			profileService = binder.getService();
+			mBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mBound = false;
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,14 +61,14 @@ public class ProfileCatagoryActivity extends Activity {
 				});
 
 		ListView lv = (ListView) findViewById(R.id.pc_lv);
-		ProfileCatagoryListViewAdapter adapter = new ProfileCatagoryListViewAdapter();
+		adapter = new ProfileCatagoryListViewAdapter();
 		lv.setAdapter(adapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View v, int arg2,
 					long arg3) {
-				// TODO Auto-generated method stub
-
+				ProfileBean pb = (ProfileBean) v.getTag(R.id.profile_bean);
+				profileService.changeProfile(pb);
 			}
 		});
 	}
@@ -58,13 +81,30 @@ public class ProfileCatagoryActivity extends Activity {
 	}
 
 	@Override
+	protected void onResume() {
+		if (adapter != null) {
+			adapter.updateData();
+			adapter.notifyDataSetChanged();
+		}
+		super.onResume();
+	}
+
+	@Override
 	protected void onStart() {
 		super.onStart();
+		Intent intent = new Intent(ProfileCatagoryActivity.this,
+				ProfileService.class);
+		this.startService(intent);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
+		if (mBound) {
+			unbindService(mConnection);
+			mBound = false;
+		}
 	}
 
 	class ProfileCatagoryListViewAdapter extends BaseAdapter {
@@ -117,7 +157,14 @@ public class ProfileCatagoryActivity extends Activity {
 			}
 			holder.icon.setImageResource(pb.getProfileIcon());
 			holder.title.setText(pb.getProfileName());
-			holder.desc.setText("test");
+			if (ProfileBean.TRIGGER_TYPE_MANUAL_OR_TIME == pb.getTriggerType()) {
+				holder.desc.setText(R.string.manual_or_time_trigger);
+			} else if (ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
+				holder.desc.setText(R.string.wifi_trigger);
+			} else {
+				holder.desc.setText("");
+			}
+			convertView.setTag(R.id.profile_bean, pb);
 			return convertView;
 		}
 

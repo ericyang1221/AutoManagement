@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.eric.autowifi.R;
 
 public class ProfileBean implements Serializable {
+	public static final int DEFAULT_PROFILE_ID = 0;
 	public static final int TRIGGER_TYPE_MANUAL_OR_TIME = 0;
 	public static final int TRIGGER_TYPE_WIFI = 1;
 	public static final int NO_CHANGE = 0;

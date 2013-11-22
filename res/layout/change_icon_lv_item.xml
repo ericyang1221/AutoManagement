@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="5dp"
+    android:paddingTop="5dp" >
+
+    <ImageButton
+        android:id="@+id/i1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@drawable/fragment_item_selector" />
+
+    <ImageButton
+        android:id="@+id/i2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@drawable/fragment_item_selector" />
+
+    <ImageButton
+        android:id="@+id/i3"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@drawable/fragment_item_selector" />
+
+    <ImageButton
+        android:id="@+id/i4"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@drawable/fragment_item_selector" />
+
+</LinearLayout>

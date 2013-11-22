@@ -78,6 +78,11 @@ public class CommFragment extends AutoManagementFragment {
 		gps.setOnClickListener(ocl);
 		bluetooth.setOnClickListener(ocl);
 		sync.setOnClickListener(ocl);
+
+		updateSwitchText(pb.getWifi(), wifiText);
+		updateSwitchText(pb.getGps(), gpsText);
+		updateSwitchText(pb.getBluetooth(), bluetoothText);
+		updateSwitchText(pb.getSyncData(), syncText);
 	}
 
 	private void showSwitchDialog(final int id, String title, int whichSelected) {
@@ -129,10 +134,10 @@ public class CommFragment extends AutoManagementFragment {
 			switchText.setText(getString(R.string.no_change));
 			break;
 		case ProfileBean.COMM_ON:
-			switchText.setText(getString(R.string.sound));
+			switchText.setText(getString(R.string.on));
 			break;
 		case ProfileBean.COMM_OFF:
-			switchText.setText(getString(R.string.sound_and_vibrate));
+			switchText.setText(getString(R.string.off));
 			break;
 		default:
 			break;
