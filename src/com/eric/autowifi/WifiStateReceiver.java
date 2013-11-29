@@ -1,5 +1,6 @@
 package com.eric.autowifi;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,8 +10,14 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.DetailedState;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+
+import com.eric.profile.db.ProfileBean;
+import com.eric.profile.db.ProfileDB;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class WifiStateReceiver extends BroadcastReceiver {
 	@Override
@@ -56,6 +63,8 @@ public class WifiStateReceiver extends BroadcastReceiver {
 					}
 				}
 			});
+
+			Utils.doAutoWifiProfile(context);
 		} else if (DetailedState.DISCONNECTED == state) {
 			Log.d("WifiStateReceiver", "WIFI DISCONNECTED.");
 			Utils.startAlarm(context,

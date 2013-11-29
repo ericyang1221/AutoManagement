@@ -292,6 +292,8 @@ public final class R {
         public static final int add_profile=0x7f08002b;
         public static final int already_the_newest=0x7f08000e;
         public static final int app_name=0x7f080000;
+        public static final int auto=0x7f080041;
+        public static final int auto_select_profile=0x7f080042;
         public static final int auto_sync_sms=0x7f080006;
         public static final int backup_id=0x7f080010;
         public static final int bluetooth=0x7f080026;
@@ -323,6 +325,7 @@ public final class R {
         public static final int other=0x7f08001d;
         public static final int please_open_wifi=0x7f080030;
         public static final int profile=0x7f080016;
+        public static final int profile_auto=0x7f080043;
         public static final int profile_icon=0x7f080028;
         public static final int rename=0x7f08003f;
         public static final int restore_already_running=0x7f080012;

@@ -49,7 +49,11 @@ public class OtherFragment extends AutoManagementFragment {
 				cid.show();
 			}
 		});
-
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		iconImg.setImageResource(pb.getProfileIcon());
 	}
 }

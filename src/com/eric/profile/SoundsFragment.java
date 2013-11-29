@@ -83,7 +83,11 @@ public class SoundsFragment extends AutoManagementFragment {
 			}
 
 		});
-
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		updateRingerMode(pb.getRingMode(), ringerModeText, ringerVolumn);
 		updateRingerVolumn(pb.getRingVolumn(), ringerVolumnText);
 		updateRingerMode(pb.getNotificationMode(), notificationModeText,

@@ -15,8 +15,14 @@ public class AutoManagementFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		pb = (ProfileBean) this.getArguments().getSerializable("profileBean");
-		myApp = (MyApplication)this.getActivity().getApplication();
+		int pid = this.getArguments().getInt("pid");
+		myApp = (MyApplication) this.getActivity().getApplication();
 		pdb = myApp.getProfileDB();
+		pb = pdb.selectProfileById(pid);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
 	}
 }

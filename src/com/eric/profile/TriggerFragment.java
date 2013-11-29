@@ -109,8 +109,8 @@ public class TriggerFragment extends AutoManagementFragment {
 
 	@Override
 	public void onStart() {
-		updateTriggerType(pb.getTriggerType(), true);
 		super.onStart();
+		updateTriggerType(pb.getTriggerType(), true);
 	}
 
 	public void showTriggerTypeDialog() {
@@ -167,35 +167,35 @@ public class TriggerFragment extends AutoManagementFragment {
 				StringBuffer sb = new StringBuffer();
 				if (isMonChecked) {
 					sb.append(TimeTriggerDialog.MON).append(
-							TimeTriggerDialog.SP);
+							TimeTriggerDialog.DSP);
 				}
 				if (isTueChecked) {
 					sb.append(TimeTriggerDialog.TUE).append(
-							TimeTriggerDialog.SP);
+							TimeTriggerDialog.DSP);
 				}
 				if (isWedChecked) {
 					sb.append(TimeTriggerDialog.WED).append(
-							TimeTriggerDialog.SP);
+							TimeTriggerDialog.DSP);
 				}
 				if (isThuChecked) {
 					sb.append(TimeTriggerDialog.THU).append(
-							TimeTriggerDialog.SP);
+							TimeTriggerDialog.DSP);
 				}
 				if (isFriChecked) {
 					sb.append(TimeTriggerDialog.FRI).append(
-							TimeTriggerDialog.SP);
+							TimeTriggerDialog.DSP);
 				}
 				if (isSatChecked) {
 					sb.append(TimeTriggerDialog.SAT).append(
-							TimeTriggerDialog.SP);
+							TimeTriggerDialog.DSP);
 				}
 				if (isSunChecked) {
 					sb.append(TimeTriggerDialog.SUN).append(
-							TimeTriggerDialog.SP);
+							TimeTriggerDialog.DSP);
 				}
 				if (sb.length() > 0) {
 					sb.deleteCharAt(sb.length() - 1);
-					sb.append(" ").append(hourOfDay).append(":").append(minute);
+					sb.append(TimeTriggerDialog.DTSP).append(hourOfDay).append(TimeTriggerDialog.TSP).append(minute);
 				} else {
 					sb.setLength(0);
 				}

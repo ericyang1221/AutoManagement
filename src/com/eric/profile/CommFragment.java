@@ -78,7 +78,11 @@ public class CommFragment extends AutoManagementFragment {
 		gps.setOnClickListener(ocl);
 		bluetooth.setOnClickListener(ocl);
 		sync.setOnClickListener(ocl);
-
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		updateSwitchText(pb.getWifi(), wifiText);
 		updateSwitchText(pb.getGps(), gpsText);
 		updateSwitchText(pb.getBluetooth(), bluetoothText);

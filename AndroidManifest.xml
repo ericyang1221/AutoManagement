@@ -68,6 +68,7 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".ChangeSettingAlarmReceiver" />
         <receiver android:name=".BluetoothReceiver" >
             <intent-filter>
                 <action android:name="android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED" />

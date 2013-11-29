@@ -51,7 +51,7 @@ public class ProfileEditorActivity extends Activity {
 
 	private void initTitleBar() {
 		final AddProfileDialog dialog = new AddProfileDialog(
-				ProfileEditorActivity.this,null);
+				ProfileEditorActivity.this, null);
 		dialog.setOnClickListener(new AddProfileDialog.OnClickListener() {
 			@Override
 			public void onOkClick(Dialog dialog, String profileName) {
@@ -87,8 +87,7 @@ public class ProfileEditorActivity extends Activity {
 				Intent i = new Intent(ProfileEditorActivity.this,
 						ProfileSettingActivity.class);
 				Bundle bundle = new Bundle();
-				bundle.putSerializable("profileBean",
-						(ProfileBean) v.getTag(R.id.profile_bean));
+				bundle.putInt("pid", ((ViewHolder) v.getTag()).id);
 				i.putExtras(bundle);
 				startActivity(i);
 			}
@@ -203,6 +202,12 @@ public class ProfileEditorActivity extends Activity {
 
 		public void updateData() {
 			pbList = pdb.selectAll();
+			for (ProfileBean pb : pbList) {
+				if (pb.isAuto()) {
+					pbList.remove(pb);
+					break;
+				}
+			}
 		}
 
 		@Override
@@ -240,17 +245,22 @@ public class ProfileEditorActivity extends Activity {
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-			holder.icon.setImageResource(pb.getProfileIcon());
-			holder.title.setText(pb.getProfileName());
-			if (ProfileBean.TRIGGER_TYPE_MANUAL_OR_TIME == pb.getTriggerType()) {
-				holder.desc.setText(R.string.manual_or_time_trigger);
-			} else if (ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
-				holder.desc.setText(R.string.wifi_trigger);
+			if (pb.isAuto()) {
+				convertView.setVisibility(View.GONE);
 			} else {
-				holder.desc.setText("");
+				holder.icon.setImageResource(pb.getProfileIcon());
+				holder.title.setText(pb.getProfileName());
+				if (ProfileBean.TRIGGER_TYPE_MANUAL_OR_TIME == pb
+						.getTriggerType()) {
+					holder.desc.setText(R.string.manual_or_time_trigger);
+				} else if (ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
+					holder.desc.setText(R.string.wifi_trigger);
+				} else {
+					holder.desc.setText("");
+				}
+				holder.id = pb.getId();
+				convertView.setTag(R.id.profile_bean, pb);
 			}
-			holder.id = pb.getId();
-			convertView.setTag(R.id.profile_bean, pb);
 			return convertView;
 		}
 

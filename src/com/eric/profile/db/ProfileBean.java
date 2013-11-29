@@ -2,9 +2,12 @@ package com.eric.profile.db;
 
 import java.io.Serializable;
 
+import android.content.Context;
+
 import com.eric.autowifi.R;
 
 public class ProfileBean implements Serializable {
+	public static final int PROFILE_AUTO_ID = 1;
 	public static final int DEFAULT_PROFILE_ID = 0;
 	public static final int TRIGGER_TYPE_MANUAL_OR_TIME = 0;
 	public static final int TRIGGER_TYPE_WIFI = 1;
@@ -60,10 +63,11 @@ public class ProfileBean implements Serializable {
 	}
 
 	public ProfileBean(int id, String profileName, int profileIcon,
-			int triggerType,String triggeredWifi, String triggerDate1, String triggerDate2,
-			String triggerDate3, String triggerDate4, int ringMode,
-			int ringVolumn, int notificationMode, int notificationVolumn,
-			int wifi, int gps, int bluetooth, int syncData) {
+			int triggerType, String triggeredWifi, String triggerDate1,
+			String triggerDate2, String triggerDate3, String triggerDate4,
+			int ringMode, int ringVolumn, int notificationMode,
+			int notificationVolumn, int wifi, int gps, int bluetooth,
+			int syncData) {
 		this.id = id;
 		this.profileName = profileName;
 		this.profileIcon = profileIcon;
@@ -219,4 +223,19 @@ public class ProfileBean implements Serializable {
 		this.triggeredWifi = triggeredWifi;
 	}
 
+	public static ProfileBean instanceAuto(Context ctx) {
+		return new ProfileBean(1, ctx.getString(R.string.auto), -1, -1, null,
+				null, null, null, null, -1, -1, -1, -1, -1, -1, -1, -1);
+	}
+
+	public static ProfileBean instanceSilent(Context ctx) {
+		return new ProfileBean(2, ctx.getString(R.string.silent),
+				R.drawable.i_34, TRIGGER_TYPE_MANUAL_OR_TIME, "", "", "", "",
+				"", SOUND_VIBRATE, 0, SOUND_VIBRATE, 0, NO_CHANGE, NO_CHANGE,
+				NO_CHANGE, NO_CHANGE);
+	}
+
+	public boolean isAuto() {
+		return id == PROFILE_AUTO_ID ? true : false;
+	}
 }

@@ -155,14 +155,21 @@ public class ProfileCatagoryActivity extends Activity {
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-			holder.icon.setImageResource(pb.getProfileIcon());
-			holder.title.setText(pb.getProfileName());
-			if (ProfileBean.TRIGGER_TYPE_MANUAL_OR_TIME == pb.getTriggerType()) {
-				holder.desc.setText(R.string.manual_or_time_trigger);
-			} else if (ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
-				holder.desc.setText(R.string.wifi_trigger);
+			if (pb.isAuto()) {
+				holder.icon.setImageBitmap(null);
+				holder.title.setText(R.string.profile_auto);
+				holder.desc.setText(R.string.auto_select_profile);
 			} else {
-				holder.desc.setText("");
+				holder.icon.setImageResource(pb.getProfileIcon());
+				holder.title.setText(pb.getProfileName());
+				if (ProfileBean.TRIGGER_TYPE_MANUAL_OR_TIME == pb
+						.getTriggerType()) {
+					holder.desc.setText(R.string.manual_or_time_trigger);
+				} else if (ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
+					holder.desc.setText(R.string.wifi_trigger);
+				} else {
+					holder.desc.setText("");
+				}
 			}
 			convertView.setTag(R.id.profile_bean, pb);
 			return convertView;

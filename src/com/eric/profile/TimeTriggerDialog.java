@@ -12,7 +12,9 @@ import android.widget.TimePicker;
 import com.eric.autowifi.R;
 
 public class TimeTriggerDialog extends Dialog {
-	public static final String SP = "-";
+	public static final String DTSP = " ";
+	public static final String DSP = "-";
+	public static final String TSP = ":";
 	public static final String MON = "Mon";
 	public static final String TUE = "Tue";
 	public static final String WED = "Wed";
@@ -39,10 +41,10 @@ public class TimeTriggerDialog extends Dialog {
 	public TimeTriggerDialog(Context context, String date) {
 		super(context);
 		if (date != null) {
-			String[] ds = date.split(" ");
+			String[] ds = date.split(DTSP);
 			if (ds.length > 1) {
-				String[] checked = ds[0].split(SP);
-				String[] time = ds[1].split(":");
+				String[] checked = ds[0].split(DSP);
+				String[] time = ds[1].split(TSP);
 				for (String s : checked) {
 					if (MON.equals(s)) {
 						isMonChecked = true;

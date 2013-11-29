@@ -7,7 +7,11 @@ import java.util.List;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.PendingIntent.CanceledException;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,22 +19,31 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.eric.profile.ProfileCatagoryActivity;
+import com.eric.profile.ProfileService;
 import com.eric.profile.db.ProfileBean;
+import com.eric.profile.db.ProfileDB;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class Utils {
+	private static final String TAG = "Utils";
+	private static final int GPS_TOGGLE = 3;
+	// private static final int SYNC_TOGGLE = 2;
 	private static final double EARTH_RADIUS = 6378137.0;
 	private static final String KEY_SERVICE_TOGGLE = "service_toggle";
 	private static final String KEY_BLUETOOTHA2DP_TOGGLE = "bluetootha2dp_toggle";
@@ -451,5 +464,220 @@ public class Utils {
 		}.getType();
 		List<String> selectedList = gson.fromJson(wifiNames, type);
 		return formatProfileWifiName(selectedList);
+	}
+
+	public static void switchWifi(Context context, boolean isEnabled) {
+		WifiManager manager = (WifiManager) context
+				.getSystemService(Context.WIFI_SERVICE);
+		manager.setWifiEnabled(isEnabled);
+	}
+
+	public static void switchBluetooth(boolean isEnabled) {
+		BluetoothAdapter bluetoothadapter = BluetoothAdapter
+				.getDefaultAdapter();
+		if (isEnabled) {
+			bluetoothadapter.enable();
+		} else {
+			bluetoothadapter.disable();
+		}
+	}
+
+	private static boolean isGpsOpen(final Context context) {
+		LocationManager locationManager = (LocationManager) context
+				.getSystemService(Context.LOCATION_SERVICE);
+		return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	}
+
+	// WIFI：0；背光高度：1；同步数据：2；GSP：3；蓝牙：4
+	private static void switchToggle(Context context, int which) {
+		Intent in = new Intent();
+		in.setClassName("com.android.settings",
+				"com.android.settings.widget.SettingsAppWidgetProvider");// 利用java反射功能，发送广播：
+		in.addCategory("android.intent.category.ALTERNATIVE");
+		in.setData(Uri.parse("custom:" + which));
+		try {
+			PendingIntent.getBroadcast(context, 0, in, 0).send();
+		} catch (CanceledException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void switchGps(Context context, boolean isEnabled) {
+		if (isEnabled) {
+			if (!isGpsOpen(context)) {
+				switchToggle(context, GPS_TOGGLE);
+			}
+		} else {
+			if (isGpsOpen(context)) {
+				switchToggle(context, GPS_TOGGLE);
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void changeSettings(Context context, ProfileBean pb) {
+		Log.d(TAG, "changeSetting:" + pb.getProfileName());
+		int ringerMode = pb.getRingMode();
+		int ringerVolumn = pb.getRingVolumn();
+		int notificationMode = pb.getNotificationMode();
+		int notificationVolumn = pb.getNotificationVolumn();
+		int bluetooth = pb.getBluetooth();
+		int gps = pb.getGps();
+		// int sync = pb.getSyncData();
+		int wifi = pb.getWifi();
+
+		AudioManager am = (AudioManager) context
+				.getSystemService(Context.AUDIO_SERVICE);
+		if (ProfileBean.SOUND_RING == ringerMode) {
+			if (am.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
+				am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+			}
+			am.setVibrateSetting(AudioManager.VIBRATE_TYPE_RINGER,
+					AudioManager.VIBRATE_SETTING_OFF);
+			int ringerMax = am.getStreamMaxVolume(AudioManager.STREAM_RING);
+			int rv = ringerVolumn * ringerMax / 100;
+			am.setStreamVolume(AudioManager.STREAM_RING, rv,
+					AudioManager.FLAG_ALLOW_RINGER_MODES);
+			Log.d(TAG, "Set ringerVolumn to : " + rv);
+			Log.d(TAG, "VIBRATE_SETTING_OFF");
+		} else if (ProfileBean.SOUND_VIBRATE == ringerMode) {
+			if (am.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE) {
+				am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+			}
+			am.setVibrateSetting(AudioManager.VIBRATE_TYPE_RINGER,
+					AudioManager.VIBRATE_SETTING_ON);
+			Log.d(TAG, "VIBRATE_SETTING_ON");
+		} else if (ProfileBean.SOUND_SILENT == ringerMode) {
+			if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+				am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+			}
+			am.setVibrateSetting(AudioManager.VIBRATE_TYPE_RINGER,
+					AudioManager.VIBRATE_SETTING_OFF);
+			Log.d(TAG, "VIBRATE_SETTING_OFF");
+		} else if (ProfileBean.SOUND_RING_AND_VIBRATE == ringerMode) {
+			if (am.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
+				am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+			}
+			am.setVibrateSetting(AudioManager.VIBRATE_TYPE_RINGER,
+					AudioManager.VIBRATE_SETTING_ON);
+			int ringerMax = am.getStreamMaxVolume(AudioManager.STREAM_RING);
+			int rv = ringerVolumn * ringerMax / 100;
+			am.setStreamVolume(AudioManager.STREAM_RING, rv,
+					AudioManager.FLAG_ALLOW_RINGER_MODES);
+			Log.d(TAG, "Set ringerVolumn to : " + rv);
+			Log.d(TAG, "VIBRATE_SETTING_ON");
+		} else {
+			// nochange , do nothing
+		}
+
+		if (ProfileBean.SOUND_RING == notificationMode) {
+			int notificationMax = am
+					.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+			int rv = notificationVolumn * notificationMax / 100;
+			am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, rv,
+					AudioManager.FLAG_ALLOW_RINGER_MODES);
+			Log.d(TAG, "Set notificationVolumn to : " + rv);
+		} else if (ProfileBean.SOUND_VIBRATE == notificationMode) {
+			am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0,
+					AudioManager.FLAG_ALLOW_RINGER_MODES);
+		} else if (ProfileBean.SOUND_SILENT == notificationMode) {
+			am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0,
+					AudioManager.FLAG_ALLOW_RINGER_MODES);
+		} else if (ProfileBean.SOUND_RING_AND_VIBRATE == notificationMode) {
+			int notificationMax = am
+					.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+			int rv = notificationVolumn * notificationMax / 100;
+			am.setStreamVolume(AudioManager.STREAM_NOTIFICATION, rv,
+					AudioManager.FLAG_ALLOW_RINGER_MODES);
+			Log.d(TAG, "Set notificationVolumn to : " + rv);
+		} else {
+			// nochange , do nothing
+		}
+
+		if (ProfileBean.COMM_ON == wifi) {
+			Utils.switchWifi(context, true);
+		} else if (ProfileBean.COMM_OFF == wifi) {
+			Utils.switchWifi(context, false);
+		} else {
+			// no change , do nothing.
+		}
+
+		if (ProfileBean.COMM_ON == bluetooth) {
+			Utils.switchBluetooth(true);
+		} else if (ProfileBean.COMM_OFF == bluetooth) {
+			Utils.switchBluetooth(false);
+		} else {
+			// no change , do nothing.
+		}
+
+		if (ProfileBean.COMM_ON == gps) {
+			Utils.switchGps(context, true);
+		} else if (ProfileBean.COMM_OFF == gps) {
+			Utils.switchGps(context, false);
+		} else {
+			// no change , do nothing.
+		}
+
+		Toast.makeText(context, pb.getProfileName(), Toast.LENGTH_SHORT).show();
+		updateProfileNotification(context, pb);
+	}
+
+	public static void doAutoWifiProfile(Context context) {
+		int pid = Utils.getCurrentProfileId(context);
+		if (ProfileBean.PROFILE_AUTO_ID == pid) {
+			MyApplication myApp = (MyApplication) context
+					.getApplicationContext();
+			ProfileDB pdb = myApp.getProfileDB();
+			List<ProfileBean> pbList = pdb.selectAll();
+			for (ProfileBean pb : pbList) {
+				if (pb != null
+						&& ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
+					String triggeredWifi = pb.getTriggeredWifi();
+					if (triggeredWifi != null && triggeredWifi.length() > 0) {
+						WifiManager wifiManager = (WifiManager) context
+								.getSystemService(Context.WIFI_SERVICE);
+						WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+						String wifi = wifiInfo.getSSID();
+
+						Gson gson = new Gson();
+						Type type = new TypeToken<List<String>>() {
+						}.getType();
+						List<String> selectedList = gson.fromJson(
+								triggeredWifi, type);
+						for (String selectedWifi : selectedList) {
+							if (selectedWifi.startsWith("\"")
+									|| selectedWifi.endsWith("\"")) {
+								selectedWifi = selectedWifi.substring(1,
+										selectedWifi.length() - 1);
+							}
+							if (selectedWifi.equals(wifi)) {
+								Utils.changeSettings(context, pb);
+								break;
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void updateProfileNotification(Context context, ProfileBean pb) {
+		Notification notification = new Notification();
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		Intent notificationIntent = new Intent(context,
+				ProfileCatagoryActivity.class);
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+				notificationIntent, 0);
+		NotificationManager nm = (NotificationManager) context
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		notification.icon = pb.getProfileIcon();
+		notification.when = System.currentTimeMillis();
+		notification.setLatestEventInfo(context,
+				context.getString(R.string.app_name), pb.getProfileName(),
+				pendingIntent);
+		nm.cancel(ProfileService.PROFILE_NOTIFICATION_ID);
+		nm.notify(ProfileService.PROFILE_NOTIFICATION_ID, notification);
 	}
 }

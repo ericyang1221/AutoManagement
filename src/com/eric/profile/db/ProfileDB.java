@@ -8,13 +8,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class ProfileDB extends SQLiteOpenHelper {
+	private final String TAG = "ProfileDB";
 	private static final String DB_NAME = "PROFILE_DB";
 	private final String TBL_NAME = "PROFILE";
+	private Context context;
 
 	public ProfileDB(Context context) {
 		super(context, DB_NAME, null, 1);
+		this.context = context;
 	}
 
 	@Override
@@ -23,6 +27,8 @@ public class ProfileDB extends SQLiteOpenHelper {
 				+ TBL_NAME
 				+ "(id integer PRIMARY KEY,profile_name varchar(50),profile_icon integer,trigger_type integer,triggered_wifi varchar(255),trigger_date1 varchar(200),trigger_date2 varchar(200),trigger_date3 varchar(200),trigger_date4 varchar(200),ring_mode integer,ring_volumn integer,notification_mode integer,notification_volumn integer,wifi integer,gps integer,bluetooth integer,sync_data integer)";
 		db.execSQL(sql);
+		initDbRow(db, ProfileBean.instanceAuto(context));
+		initDbRow(db, ProfileBean.instanceSilent(context));
 	}
 
 	@Override
@@ -177,6 +183,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 		long ret = this.getWritableDatabase().update(TBL_NAME, values,
 				whereClause, whereArgs);
 		this.getWritableDatabase().close();
+		Log.d(TAG, "Update profile:"+pb.getProfileName());
 		return ret;
 	}
 
@@ -185,5 +192,26 @@ public class ProfileDB extends SQLiteOpenHelper {
 		String[] whereArgs = { String.valueOf(id) };
 		this.getWritableDatabase().delete(TBL_NAME, whereClause, whereArgs);
 		this.getWritableDatabase().close();
+	}
+
+	private void initDbRow(SQLiteDatabase db, ProfileBean pb) {
+		ContentValues values = new ContentValues();
+		values.put("profile_name", pb.getProfileName());
+		values.put("profile_icon", pb.getProfileIcon());
+		values.put("trigger_type", pb.getTriggerType());
+		values.put("triggered_wifi", pb.getTriggeredWifi());
+		values.put("trigger_date1", pb.getTriggerDate1());
+		values.put("trigger_date2", pb.getTriggerDate2());
+		values.put("trigger_date3", pb.getTriggerDate3());
+		values.put("trigger_date4", pb.getTriggerDate4());
+		values.put("ring_mode", pb.getRingMode());
+		values.put("ring_volumn", pb.getRingVolumn());
+		values.put("notification_mode", pb.getNotificationMode());
+		values.put("notification_volumn", pb.getNotificationVolumn());
+		values.put("wifi", pb.getWifi());
+		values.put("gps", pb.getGps());
+		values.put("bluetooth", pb.getBluetooth());
+		values.put("sync_data", pb.getSyncData());
+		db.insert(TBL_NAME, "", values);
 	}
 }

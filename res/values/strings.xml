@@ -66,5 +66,8 @@
     <string name="silent">静音</string>
     <string name="rename">重命名</string>
     <string name="delete">删除</string>
+    <string name="auto">自动</string>
+    <string name="auto_select_profile">自动选择情景模式</string>
+    <string name="profile_auto">情景模式 自动</string>
 
 </resources>
