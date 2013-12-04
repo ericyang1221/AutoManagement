@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class DownloadService extends Service {
+	private final String TAG = "DownloadService";
 	private Context context;
 
 	@Override
@@ -32,6 +33,7 @@ public class DownloadService extends Service {
 				if (ub != null) {
 					Utils.setLastCheckUpdateTime(context,
 							System.currentTimeMillis());
+					Log.d(TAG, "isNeedUpdate:" + ub.isNeedUpdate());
 					if (ub.isNeedUpdate()) {
 						HttpRequestHelper hrh = new HttpRequestHelper();
 						String subPath = Utils.getAppFolder(context)

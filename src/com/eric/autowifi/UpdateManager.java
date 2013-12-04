@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.util.Log;
 
 public class UpdateManager {
+	private final static String TAG = "UpdateManager";
 
 	public static void doUpdate(final Context context) {
+		Log.d(TAG, "doUpdate");
 		long lastCheckupdateTime = Utils.getLastCheckUpdateTime(context);
 		// lastCheckupdateTime = 0;
 		long d = System.currentTimeMillis() - lastCheckupdateTime;
@@ -17,6 +19,7 @@ public class UpdateManager {
 		Log.d("UpdateManager.doUpdate", "Days from last update," + d / 1000
 				/ 60 / 60 / 24);
 		if (d > (7 * 24 * 60 * 60 * 1000)) {
+			Log.d(TAG, "updating");
 			Intent downloadIntent = new Intent(context, DownloadService.class);
 			context.startService(downloadIntent);
 		}

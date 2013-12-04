@@ -132,9 +132,8 @@ public class ProfileService extends Service {
 			String[] day = dateAndTime[0].split(TimeTriggerDialog.DSP);
 			String[] time = dateAndTime[1].split(TimeTriggerDialog.TSP);
 			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(System.currentTimeMillis());
 			int today = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-			int dom = calendar.get(Calendar.DAY_OF_MONTH);
+			Log.d(TAG, "Today:" + today);
 			if (today < 1) {
 				today = 7;
 			}
@@ -172,22 +171,25 @@ public class ProfileService extends Service {
 					e.printStackTrace();
 				}
 			}
+			Log.d(TAG, "TriggeredHour:" + triHh);
+			Log.d(TAG, "TriggeredMinute:" + triMi);
 			for (int i = 0; i < triDays.size(); i++) {
 				int td = triDays.get(i);
+				Log.d(TAG, "TriggeredDay:" + td);
 				if (td < today) {
-					int d = today - td + 1;
-					calendar.set(Calendar.DAY_OF_MONTH, dom + d);
-					calendar.set(Calendar.HOUR, triHh);
+					int d = 7 - (today - td);
+					calendar.add(Calendar.DAY_OF_MONTH, d);
+					calendar.set(Calendar.HOUR_OF_DAY, triHh);
 					calendar.set(Calendar.MINUTE, triMi);
 				} else if (td == today) {
 					if (triHh < hh) {
-						calendar.set(Calendar.DAY_OF_MONTH, dom + 7);
-						calendar.set(Calendar.HOUR, triHh);
+						calendar.add(Calendar.DAY_OF_MONTH, 7);
+						calendar.set(Calendar.HOUR_OF_DAY, triHh);
 						calendar.set(Calendar.MINUTE, triMi);
 					} else if (triHh == hh) {
 						if (triMi < mi) {
-							calendar.set(Calendar.DAY_OF_MONTH, dom + 7);
-							calendar.set(Calendar.HOUR, triHh);
+							calendar.add(Calendar.DAY_OF_MONTH, 7);
+							calendar.set(Calendar.HOUR_OF_DAY, triHh);
 							calendar.set(Calendar.MINUTE, triMi);
 						} else if (triMi == mi) {
 							// noting to do.trigger now.
@@ -195,20 +197,23 @@ public class ProfileService extends Service {
 							calendar.set(Calendar.MINUTE, triMi);
 						}
 					} else {
-						calendar.set(Calendar.HOUR, triHh);
+						calendar.set(Calendar.HOUR_OF_DAY, triHh);
 						calendar.set(Calendar.MINUTE, triMi);
 					}
 				} else {
-					calendar.set(Calendar.DAY_OF_MONTH, td);
-					calendar.set(Calendar.HOUR, triHh);
+					calendar.set(Calendar.HOUR_OF_DAY, triHh);
 					calendar.set(Calendar.MINUTE, triMi);
+					int d = td - today;
+					calendar.add(Calendar.DAY_OF_MONTH, d);
 				}
 				AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 				alarm.setRepeating(AlarmManager.RTC_WAKEUP,
 						calendar.getTimeInMillis(), WEEKLY_INTERVAL,
 						getAlarmBroadCastSender(_pb));
-				Log.d(TAG, "startProfileAlarm:" + _pb.getProfileName()
-						+ " after:" + calendar.getTimeInMillis());
+				Log.d(TAG, "startProfileAlarm:" + _pb.getProfileName() + " at:"
+						+ calendar.getTime());
+				// reset calendar
+				calendar = Calendar.getInstance();
 			}
 		}
 	}
@@ -222,12 +227,18 @@ public class ProfileService extends Service {
 	}
 
 	private void clearAlarms() {
+		Log.d(TAG, "clearAlarms");
 		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, ChangeSettingAlarmReceiver.class);
 		for (int i = 0; i < requestCode; i++) {
 			PendingIntent sender = PendingIntent.getBroadcast(this,
 					requestCode, intent, 0);
-			alarm.cancel(sender);
+			try {
+				alarm.cancel(sender);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e(TAG, "clearAlarms error : " + requestCode);
+			}
 		}
 		requestCode = 0;
 	}

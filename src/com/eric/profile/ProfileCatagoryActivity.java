@@ -30,6 +30,7 @@ public class ProfileCatagoryActivity extends Activity {
 	ProfileCatagoryListViewAdapter adapter;
 	private ProfileService profileService;
 	private boolean mBound = false;
+	private boolean isFromNotification;
 
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
@@ -50,6 +51,10 @@ public class ProfileCatagoryActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile_catagory);
 
+		isFromNotification = this.getIntent().getBooleanExtra(
+				"isFromNotification", false);
+		System.out.println(isFromNotification);
+
 		findViewById(R.id.profile_edit).setOnClickListener(
 				new OnClickListener() {
 					@Override
@@ -69,6 +74,9 @@ public class ProfileCatagoryActivity extends Activity {
 					long arg3) {
 				ProfileBean pb = (ProfileBean) v.getTag(R.id.profile_bean);
 				profileService.changeProfile(pb);
+				if (isFromNotification) {
+					finish();
+				}
 			}
 		});
 	}

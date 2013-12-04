@@ -623,6 +623,7 @@ public class Utils {
 	}
 
 	public static void doAutoWifiProfile(Context context) {
+		boolean isOk = false;
 		int pid = Utils.getCurrentProfileId(context);
 		if (ProfileBean.PROFILE_AUTO_ID == pid) {
 			MyApplication myApp = (MyApplication) context
@@ -652,11 +653,14 @@ public class Utils {
 							}
 							if (selectedWifi.equals(wifi)) {
 								Utils.changeSettings(context, pb);
+								isOk = true;
 								break;
 							}
 						}
 					}
-					break;
+					if (isOk) {
+						break;
+					}
 				}
 			}
 		}
@@ -668,15 +672,22 @@ public class Utils {
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		Intent notificationIntent = new Intent(context,
 				ProfileCatagoryActivity.class);
+		notificationIntent.putExtra("isFromNotification", true);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
+				notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		NotificationManager nm = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		notification.icon = pb.getProfileIcon();
 		notification.when = System.currentTimeMillis();
+		String content;
+		if (ProfileBean.PROFILE_AUTO_ID == Utils.getCurrentProfileId(context)) {
+			content = context.getString(R.string.auto) + "("
+					+ pb.getProfileName() + ")";
+		} else {
+			content = pb.getProfileName();
+		}
 		notification.setLatestEventInfo(context,
-				context.getString(R.string.app_name), pb.getProfileName(),
-				pendingIntent);
+				context.getString(R.string.app_name), content, pendingIntent);
 		nm.cancel(ProfileService.PROFILE_NOTIFICATION_ID);
 		nm.notify(ProfileService.PROFILE_NOTIFICATION_ID, notification);
 	}
