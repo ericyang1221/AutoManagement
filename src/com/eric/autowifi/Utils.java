@@ -786,17 +786,34 @@ public class Utils {
 									}.getType();
 									List<LocationBean> lbl = gson
 											.fromJson(l, t);
-									for (LocationBean lb : lbl) {
-										try {
-											List<LocationBean> lbList = ldb
-													.selectByLatAndLng(
-															lb.getLatitude(),
-															lb.getLongitude());
-											if (lbList.size() < 1) {
-												ldb.insert(lb);
+									List<LocationBean> clbList = ldb
+											.selectAll();
+									if (clbList != null && clbList.size() > 0) {
+										for (LocationBean lb : lbl) {
+											for (LocationBean clb : clbList) {
+												double d = Utils.getDistance(
+														lb.getLatitude(),
+														lb.getLongitude(),
+														clb.getLatitude(),
+														clb.getLongitude());
+												if (d > Constants.DEFAULT_INSERT_RADIUS) {
+													ldb.insert(lb);
+													Log.d(TAG,
+															"Restore location:("
+																	+ lb.getLatitude()
+																	+ ","
+																	+ lb.getLongitude()
+																	+ ")");
+												}
 											}
-										} catch (Exception e) {
-											e.printStackTrace();
+										}
+									} else {
+										for (LocationBean lb : lbl) {
+											try {
+												ldb.insert(lb);
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
 										}
 									}
 								}
