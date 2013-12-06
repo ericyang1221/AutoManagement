@@ -74,6 +74,9 @@ public class UpdateManager {
 			if (jo.has("url")) {
 				ub.setUpdateUrl(jo.getString("url"));
 			}
+			if (jo.has("desc")) {
+				ub.setDesc(jo.getString("desc"));
+			}
 		}
 		return ub;
 	}

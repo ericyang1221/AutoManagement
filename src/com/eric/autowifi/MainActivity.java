@@ -203,7 +203,7 @@ public class MainActivity extends Activity {
 									isChecked);
 						} else {
 							String myphoneNumber = Utils
-									.getMyphoneNunmber(MainActivity.this);
+									.getMyphoneNumber(MainActivity.this);
 							if (myphoneNumber == null
 									|| "".equals(myphoneNumber)) {
 								String imsi = Utils.getImsi(MainActivity.this);

@@ -341,6 +341,7 @@ public final class R {
         public static final int sounds=0x7f08001b;
         public static final int sun=0x7f080039;
         public static final int sure_to_delete=0x7f08002d;
+        public static final int sure_to_update=0x7f080044;
         public static final int sync_date=0x7f080027;
         public static final int sync_sms_immediatly=0x7f08000c;
         public static final int thu=0x7f080036;
@@ -350,6 +351,7 @@ public final class R {
         public static final int trigger_type=0x7f08001e;
         public static final int trigger_wifi=0x7f08002e;
         public static final int tue=0x7f080034;
+        public static final int update=0x7f080045;
         public static final int vibrate=0x7f08003c;
         public static final int wed=0x7f080035;
         public static final int wifi=0x7f080024;

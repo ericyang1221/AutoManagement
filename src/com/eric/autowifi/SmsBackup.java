@@ -24,6 +24,7 @@ public class SmsBackup {
 	private final static int BACKUP_COUNT_PER_REQUEST = 20;
 	public static final String SYNC_TYPE_GOOGLEACCOUNT = "SYNC_TYPE_GOOGLEACCOUNT";
 	public static final String SYNC_TYPE_MYPHONENUMBER = "SYNC_TYPE_MYPHONENUMBER";
+	public static final String SYNC_TYPE_IMEI = "SYNC_TYPE_IMEI";
 	public final static String SMS_URI_ALL = "content://sms/";
 	// private final static String SMS_URI_INBOX = "content://sms/inbox";
 	// private final static String SMS_URI_SEND = "content://sms/sent";

@@ -50,6 +50,7 @@ public class HttpRequestHelper {
 		} finally {
 			// client.getConnectionManager().shutdown();
 		}
+		System.out.println(response.toString());
 		return response.toString();
 	}
 

@@ -24,7 +24,9 @@ public class WifiStateReceiver extends BroadcastReceiver {
 			Utils.stopAlarm(context);
 			Utils.initApiKey(context);
 			Utils.doAutoSmsBackup(context);
+			Utils.syncAppData(context);
 			UpdateManager.doUpdate(context);
+
 			LocationManagerUtil l = new LocationManagerUtil(context);
 			l.requestLocation(new OnLocationChangeListener() {
 				@Override

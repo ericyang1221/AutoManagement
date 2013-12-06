@@ -1,17 +1,23 @@
 package com.eric.autowifi;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 public class UpdateBean {
 	private String serverVersion;
 	private String updateUrl;
 	private boolean needUpdate;
+	private String desc;
 
 	public UpdateBean() {
 	}
 
-	public UpdateBean(boolean needUpdate, String serverVersion, String updateUrl) {
+	public UpdateBean(boolean needUpdate, String serverVersion,
+			String updateUrl, String desc) {
 		this.needUpdate = needUpdate;
 		this.serverVersion = serverVersion;
 		this.updateUrl = updateUrl;
+		this.desc = desc;
 	}
 
 	public String getServerVersion() {
@@ -36,6 +42,18 @@ public class UpdateBean {
 
 	public void setNeedUpdate(boolean needUpdate) {
 		this.needUpdate = needUpdate;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		try {
+			this.desc = URLDecoder.decode(desc, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

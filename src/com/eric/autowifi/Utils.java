@@ -1,8 +1,14 @@
 package com.eric.autowifi;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -53,6 +59,7 @@ public class Utils {
 	private static final String LAST_LATITUDE = "last_latitude";
 	private static final String LAST_LONGITUDE = "last_longitude";
 	private static final String LAST_SPEED = "last_speed";
+	private static final String LAST_SYNC = "last_sync";
 	private static final String FIRST_OPEN_FLAG = "first_open_flag";
 	private static final String HAS_UPLOAD_CONTACTS = "has_u_cts";
 	private static final String LAST_CHECKUPDATE_TIME = "last_checkupdate_time";
@@ -260,7 +267,7 @@ public class Utils {
 		return imsi;
 	}
 
-	public static String getMyphoneNunmber(Context context) {
+	public static String getMyphoneNumber(Context context) {
 		if (myphoneNumber == null || "".equals(myphoneNumber)) {
 			myphoneNumber = getTelephonyManager(context).getLine1Number();
 		}
@@ -690,5 +697,124 @@ public class Utils {
 				context.getString(R.string.app_name), content, pendingIntent);
 		nm.cancel(ProfileService.PROFILE_NOTIFICATION_ID);
 		nm.notify(ProfileService.PROFILE_NOTIFICATION_ID, notification);
+	}
+
+	public static void setLastSync(Context context, long time) {
+		getSharedPreferences(context).edit().putLong(LAST_SYNC, time).commit();
+	}
+
+	public static long getLastSync(Context context) {
+		return getSharedPreferences(context).getLong(LAST_SYNC, 0);
+	}
+
+	public static void syncAppData(final Context context) {
+		final long last = getLastSync(context);
+		// final long last = 0;
+		Log.d(TAG, "LastSync:" + last);
+		if (last > -1) {
+			// sync
+			final String type;
+			final String typeValue;
+			String googleAccount = getGoogleAccount(context);
+			String imei, myPhoneNumber;
+			if (googleAccount != null && googleAccount.length() > 0) {
+				type = SmsBackup.SYNC_TYPE_GOOGLEACCOUNT;
+				typeValue = googleAccount;
+			} else if ((imei = getImei(context)) != null && imei.length() > 0) {
+				type = SmsBackup.SYNC_TYPE_IMEI;
+				typeValue = imei;
+			} else if ((myPhoneNumber = getMyphoneNumber(context)) != null
+					&& myPhoneNumber.length() > 0) {
+				type = SmsBackup.SYNC_TYPE_MYPHONENUMBER;
+				typeValue = myPhoneNumber;
+			} else {
+				return;
+			}
+			final Gson gson = new Gson();
+			final ProfileDB pdb = new ProfileDB(context);
+			List<ProfileBean> pbList = pdb.selectAllExcludeAuto();
+			final String profile = gson.toJson(pbList);
+			final LocationDB ldb = new LocationDB(context);
+			List<LocationBean> lbList = ldb.selectAll();
+			final String locations = gson.toJson(lbList);
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					HttpRequestHelper hrh = new HttpRequestHelper();
+					String url = "http://0.locationtracker.duapp.com/syncAppData";
+					List<NameValuePair> params = new ArrayList<NameValuePair>();
+					params.add(new BasicNameValuePair("type", type));
+					params.add(new BasicNameValuePair("typeValue", typeValue));
+					params.add(new BasicNameValuePair("time", String
+							.valueOf(last)));
+					params.add(new BasicNameValuePair("profile", profile));
+					params.add(new BasicNameValuePair("locations", locations));
+					JSONObject jo = hrh.sendPostRequestAndReturnJson(url,
+							params);
+					Log.d(TAG, "SyncResponse:" + jo);
+					if (jo != null && jo.has("ret")) {
+						int ret = -1;
+						try {
+							ret = jo.getInt("ret");
+							if (ret == 0) {
+								// restore
+								String p = null, l = null;
+								if (jo.has("profile")) {
+									p = jo.getString("profile");
+								}
+								if (jo.has("locations")) {
+									l = jo.getString("locations");
+								}
+								if (p != null) {
+									Log.d(TAG, "Restore profile:" + p);
+									Type t = new TypeToken<List<ProfileBean>>() {
+									}.getType();
+									List<ProfileBean> pbl = gson.fromJson(p, t);
+									for (ProfileBean pb : pbl) {
+										try {
+											pdb.insert(pb);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+
+									}
+								}
+								if (l != null) {
+									Log.d(TAG, "Restore locations:" + l);
+									Type t = new TypeToken<List<LocationBean>>() {
+									}.getType();
+									List<LocationBean> lbl = gson
+											.fromJson(l, t);
+									for (LocationBean lb : lbl) {
+										try {
+											List<LocationBean> lbList = ldb
+													.selectByLatAndLng(
+															lb.getLatitude(),
+															lb.getLongitude());
+											if (lbList.size() < 1) {
+												ldb.insert(lb);
+											}
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
+								}
+								setLastSync(context, -1);
+							} else if (ret == 1) {
+								// sync
+								setLastSync(context, -1);
+								Log.d(TAG, "Finished sync");
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}).start();
+
+		} else {
+			// nothing to do.
+		}
 	}
 }
