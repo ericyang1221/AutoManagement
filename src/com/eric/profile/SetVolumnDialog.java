@@ -12,7 +12,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.eric.autowifi.R;
-import com.eric.profile.db.ProfileBean;
+import com.eric.profile.beans.ProfileBean;
 
 public class SetVolumnDialog extends Dialog {
 	private OnClickListener onClickListener;

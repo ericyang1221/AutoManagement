@@ -2,6 +2,8 @@ package com.eric.autowifi;
 
 import java.io.File;
 
+import com.eric.autowifi.beans.UpdateBean;
+
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Service;
@@ -41,7 +43,7 @@ public class DownloadService extends Service {
 					Utils.setLastCheckUpdateTime(context,
 							System.currentTimeMillis());
 					Log.d(TAG, "isNeedUpdate:" + ub.isNeedUpdate());
-					if (ub.isNeedUpdate()) {
+					if (ub.isNeedUpdate() && Utils.hasWifi(context)) {
 						final AlertDialog.Builder builder = new Builder(context);
 						String msg = (ub.getDesc() != null && !"".equals(ub
 								.getDesc())) ? ub.getDesc() : context
@@ -54,32 +56,39 @@ public class DownloadService extends Service {
 									public void onClick(DialogInterface dialog,
 											int which) {
 										dialog.dismiss();
-										HttpRequestHelper hrh = new HttpRequestHelper();
-										String subPath = Utils
-												.getAppFolder(context)
-												+ "/downloads/";
-										String fileName = Utils
-												.getAppName(context)
-												+ "v"
-												+ ub.getServerVersion()
-												+ ".apk";
-										File resultFile = hrh.downFile(
-												ub.getUpdateUrl(), subPath,
-												fileName);
-										if (resultFile != null) {
-											Intent intent = new Intent(
-													Intent.ACTION_VIEW);
-											intent.setDataAndType(
-													Uri.fromFile(resultFile),
-													"application/vnd.android.package-archive");
-											intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-											startActivity(intent);
-											Log.d("DownloadService.onStartCommand",
-													"Update successfully.");
-										} else {
-											Log.d("DownloadService.onStartCommand",
-													"Update failed.");
-										}
+										new Thread(new Runnable() {
+
+											@Override
+											public void run() {
+												HttpRequestHelper hrh = new HttpRequestHelper();
+												String subPath = Utils
+														.getAppFolder(context)
+														+ "/downloads/";
+												String fileName = Utils
+														.getAppName(context)
+														+ "v"
+														+ ub.getServerVersion()
+														+ ".apk";
+												File resultFile = hrh.downFile(
+														ub.getUpdateUrl(),
+														subPath, fileName);
+												if (resultFile != null) {
+													Intent intent = new Intent(
+															Intent.ACTION_VIEW);
+													intent.setDataAndType(
+															Uri.fromFile(resultFile),
+															"application/vnd.android.package-archive");
+													intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+													startActivity(intent);
+													Log.d("DownloadService.onStartCommand",
+															"Update successfully.");
+												} else {
+													Log.d("DownloadService.onStartCommand",
+															"Update failed.");
+												}
+											}
+
+										}).start();
 									}
 								});
 						builder.setNegativeButton(R.string.cancel,

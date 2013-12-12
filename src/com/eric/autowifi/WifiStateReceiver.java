@@ -3,6 +3,8 @@ package com.eric.autowifi;
 import java.util.Collections;
 import java.util.List;
 
+import com.eric.autowifi.beans.LocationBean;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +27,7 @@ public class WifiStateReceiver extends BroadcastReceiver {
 			Utils.initApiKey(context);
 			Utils.doAutoSmsBackup(context);
 			Utils.syncAppData(context);
-			UpdateManager.doUpdate(context);
+			UpdateManager.doUpdate(context, false);
 
 			LocationManagerUtil l = new LocationManagerUtil(context);
 			l.requestLocation(new OnLocationChangeListener() {

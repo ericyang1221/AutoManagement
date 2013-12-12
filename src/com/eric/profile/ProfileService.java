@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.eric.autowifi.MyApplication;
 import com.eric.autowifi.Utils;
-import com.eric.profile.db.ProfileBean;
+import com.eric.profile.beans.ProfileBean;
 import com.eric.profile.db.ProfileDB;
 
 public class ProfileService extends Service {
@@ -27,6 +27,8 @@ public class ProfileService extends Service {
 	private ProfileBean pb;
 	private int requestCode = 0;
 	private ProfileDB pdb;
+	private long lastDelta = Long.MAX_VALUE;
+	private ProfileBean profileAccordingTime;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -101,8 +103,14 @@ public class ProfileService extends Service {
 		doAutoTimerProfile();
 	}
 
+	private void resetLastProfileAccordingTime() {
+		lastDelta = Long.MAX_VALUE;
+		profileAccordingTime = null;
+	}
+
 	private void doAutoTimerProfile() {
 		clearAlarms();
+		resetLastProfileAccordingTime();
 		List<ProfileBean> pbList = pdb.selectAll();
 		for (ProfileBean _pb : pbList) {
 			if (ProfileBean.TRIGGER_TYPE_MANUAL_OR_TIME == _pb.getTriggerType()) {
@@ -123,6 +131,10 @@ public class ProfileService extends Service {
 					startAlarm(td4, _pb);
 				}
 			}
+		}
+		int currentSettingId = Utils.getCurrentSettingId();
+		if (currentSettingId < 0 && profileAccordingTime != null) {
+			Utils.changeSettings(this, profileAccordingTime);
 		}
 	}
 
@@ -214,6 +226,20 @@ public class ProfileService extends Service {
 						+ calendar.getTime());
 				// reset calendar
 				calendar = Calendar.getInstance();
+				// calculate delta millions
+				if (Utils.getCurrentSettingId() < 0) {
+					Calendar dc = Calendar.getInstance();
+					dc.add(Calendar.DAY_OF_MONTH, td - today);
+					dc.set(Calendar.HOUR_OF_DAY, triHh);
+					dc.set(Calendar.MINUTE, triMi);
+					long delta = calendar.getTimeInMillis()
+							- dc.getTimeInMillis();
+					if (delta > 0 && delta < lastDelta) {
+						lastDelta = delta;
+						profileAccordingTime = _pb;
+						Log.d(TAG, "lastDelta:" + lastDelta);
+					}
+				}
 			}
 		}
 	}

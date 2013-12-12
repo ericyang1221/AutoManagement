@@ -18,6 +18,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.eric.autowifi.beans.SMSBean;
+import com.eric.autowifi.beans.SMSJSONWrapper;
 import com.google.gson.Gson;
 
 public class SmsBackup {

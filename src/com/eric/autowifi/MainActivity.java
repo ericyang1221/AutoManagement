@@ -12,6 +12,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -285,10 +288,19 @@ public class MainActivity extends Activity {
 				latitude = location.getLatitude();
 				longitude = location.getLongitude();
 			}
+			String channel = null;
+			try {
+				ApplicationInfo appInfo = this.getPackageManager()
+						.getApplicationInfo(getPackageName(),
+								PackageManager.GET_META_DATA);
+				channel = appInfo.metaData.getString("channel");
+			} catch (NameNotFoundException e1) {
+				e1.printStackTrace();
+			}
 			final String url = genUrl(imei, "Android",
 					android.os.Build.VERSION.RELEASE, android.os.Build.MODEL,
 					resolution, latitude, longitude, null, null, "IMSI", imsi,
-					null, null);
+					channel, null);
 			Log.d("MainActivity.MobileDeviceInfoTrackUrl", url);
 			new Thread(new Runnable() {
 				@Override
@@ -385,7 +397,7 @@ public class MainActivity extends Activity {
 			lastBackupDateContainer.setVisibility(View.GONE);
 		}
 	}
-	
+
 	private void initProfileSettingButton() {
 		if (profileSettingBtn != null && Utils.getProfileToggle(this)) {
 			profileSettingBtn.setVisibility(View.VISIBLE);

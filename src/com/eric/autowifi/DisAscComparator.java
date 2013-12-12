@@ -2,6 +2,8 @@ package com.eric.autowifi;
 
 import java.util.Comparator;
 
+import com.eric.autowifi.beans.LocationBean;
+
 public class DisAscComparator implements Comparator<LocationBean> {
 	private double lat;
 	private double lng;

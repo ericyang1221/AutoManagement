@@ -1,5 +1,7 @@
 package com.eric.autowifi;
 
+import com.eric.autowifi.beans.LastLocationBean;
+
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;

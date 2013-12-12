@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.eric.autowifi.R;
 import com.eric.profile.ProfileService.MyBinder;
-import com.eric.profile.db.ProfileBean;
+import com.eric.profile.beans.ProfileBean;
 import com.eric.profile.db.ProfileDB;
 
 public class ProfileCatagoryActivity extends Activity {

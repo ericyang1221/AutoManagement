@@ -3,6 +3,8 @@ package com.eric.autowifi;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.eric.autowifi.beans.UpdateBean;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -10,7 +12,7 @@ import android.util.Log;
 public class UpdateManager {
 	private final static String TAG = "UpdateManager";
 
-	public static void doUpdate(final Context context) {
+	public static void doUpdate(final Context context, boolean isForced) {
 		Log.d(TAG, "doUpdate");
 		long lastCheckupdateTime = Utils.getLastCheckUpdateTime(context);
 		// lastCheckupdateTime = 0;
@@ -18,7 +20,7 @@ public class UpdateManager {
 		// do update every week.
 		Log.d("UpdateManager.doUpdate", "Days from last update," + d / 1000
 				/ 60 / 60 / 24);
-		if (d > (7 * 24 * 60 * 60 * 1000)) {
+		if (d > (7 * 24 * 60 * 60 * 1000) || isForced) {
 			Log.d(TAG, "updating");
 			Intent downloadIntent = new Intent(context, DownloadService.class);
 			context.startService(downloadIntent);

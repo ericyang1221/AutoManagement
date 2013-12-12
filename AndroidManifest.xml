@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eric.autowifi"
-    android:versionCode="3"
-    android:versionName="1.6" >
+    android:versionCode="17"
+    android:versionName="1.7" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -150,6 +150,9 @@
         <meta-data
             android:name="api_key"
             android:value="CXT5cE1b6DzGthxu9Yvt3gQa" />
+        <meta-data
+            android:name="channel"
+            android:value="AnzhuoMarket" />
     </application>
 
 </manifest>

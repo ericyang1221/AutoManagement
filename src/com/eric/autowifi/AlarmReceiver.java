@@ -3,6 +3,8 @@ package com.eric.autowifi;
 import java.util.Collections;
 import java.util.List;
 
+import com.eric.autowifi.beans.LocationBean;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

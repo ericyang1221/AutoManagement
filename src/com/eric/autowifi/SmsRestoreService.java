@@ -19,6 +19,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.eric.autowifi.beans.SMSBean;
+import com.eric.autowifi.beans.SMSJSONWrapper;
 import com.google.gson.Gson;
 
 public class SmsRestoreService extends Service {

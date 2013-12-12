@@ -28,6 +28,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.DetailedState;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
@@ -39,9 +41,11 @@ import android.widget.Toast;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.eric.autowifi.beans.LastLocationBean;
+import com.eric.autowifi.beans.LocationBean;
 import com.eric.profile.ProfileCatagoryActivity;
 import com.eric.profile.ProfileService;
-import com.eric.profile.db.ProfileBean;
+import com.eric.profile.beans.ProfileBean;
 import com.eric.profile.db.ProfileDB;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -71,6 +75,7 @@ public class Utils {
 	private static String imsi;
 	private static String myphoneNumber;
 	private static String appName;
+	private static int currentSettingId = -1;
 
 	// 返回单位是米
 	public static double getDistance(double latitude1, double longitude1,
@@ -178,6 +183,10 @@ public class Utils {
 	public static int getCurrentProfileId(Context context) {
 		return getSharedPreferences(context).getInt(CURRENT_PROFILE_ID,
 				ProfileBean.DEFAULT_PROFILE_ID);
+	}
+
+	public static int getCurrentSettingId() {
+		return currentSettingId;
 	}
 
 	public static int getLastSpeed(Context context) {
@@ -524,6 +533,9 @@ public class Utils {
 	@SuppressWarnings("deprecation")
 	public static void changeSettings(Context context, ProfileBean pb) {
 		Log.d(TAG, "changeSetting:" + pb.getProfileName());
+		if (currentSettingId == pb.getId()) {
+			return;
+		}
 		int ringerMode = pb.getRingMode();
 		int ringerVolumn = pb.getRingVolumn();
 		int notificationMode = pb.getNotificationMode();
@@ -627,6 +639,7 @@ public class Utils {
 
 		Toast.makeText(context, pb.getProfileName(), Toast.LENGTH_SHORT).show();
 		updateProfileNotification(context, pb);
+		currentSettingId = pb.getId();
 	}
 
 	public static void doAutoWifiProfile(Context context) {
@@ -833,5 +846,16 @@ public class Utils {
 		} else {
 			// nothing to do.
 		}
+	}
+
+	public static boolean hasWifi(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+		if (activeNetInfo != null
+				&& activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eric.autowifi.R;
-import com.eric.profile.db.ProfileBean;
+import com.eric.profile.beans.ProfileBean;
 
 @SuppressLint("NewApi")
 public class SoundsFragment extends AutoManagementFragment {

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.eric.autowifi.Utils;
-import com.eric.profile.db.ProfileBean;
+import com.eric.profile.beans.ProfileBean;
 
 public class ChangeSettingAlarmReceiver extends BroadcastReceiver {
 	private final String TAG = "ChangeSettingAlarmReceiver";

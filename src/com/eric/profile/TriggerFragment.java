@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.eric.autowifi.R;
 import com.eric.autowifi.Utils;
-import com.eric.profile.db.ProfileBean;
+import com.eric.profile.beans.ProfileBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

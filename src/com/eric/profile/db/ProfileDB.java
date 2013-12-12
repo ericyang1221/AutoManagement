@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.eric.autowifi.Utils;
+import com.eric.profile.beans.ProfileBean;
 
 import android.content.ContentValues;
 import android.content.Context;
