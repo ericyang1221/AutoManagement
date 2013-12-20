@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,12 +30,14 @@ import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.NetworkInfo.DetailedState;
 import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.provider.Telephony;
+import android.provider.Telephony.Sms;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -76,6 +79,8 @@ public class Utils {
 	private static String myphoneNumber;
 	private static String appName;
 	private static int currentSettingId = -1;
+	private static String defaultSmsApp = "";
+	private static boolean isRestoreSms = false;
 
 	// 返回单位是米
 	public static double getDistance(double latitude1, double longitude1,
@@ -386,10 +391,42 @@ public class Utils {
 		}).start();
 	}
 
-	public static Intent doRestoreImmediatly(final Context context) {
+	@SuppressLint("NewApi")
+	public static void doRestoreImmediatly(final Context context) {
+		if (Build.VERSION.SDK_INT > 18) {
+			defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(context);
+			if (!context.getPackageName().equals(defaultSmsApp)) {
+				Intent intent = new Intent(Sms.Intents.ACTION_CHANGE_DEFAULT);
+				intent.putExtra(Sms.Intents.EXTRA_PACKAGE_NAME,
+						context.getPackageName());
+				context.startActivity(intent);
+				isRestoreSms = true;
+				return;
+			}
+		}
 		Intent intent = new Intent(context, SmsRestoreService.class);
 		context.startService(intent);
-		return intent;
+	}
+
+	@SuppressLint("NewApi")
+	public static void continueRestoreSms(Context context) {
+		if (isRestoreSms && Build.VERSION.SDK_INT > 18) {
+			String currentSmsApp = Telephony.Sms.getDefaultSmsPackage(context);
+			if (context.getPackageName().equals(currentSmsApp)) {
+				Intent intent = new Intent(context, SmsRestoreService.class);
+				context.startService(intent);
+			}
+		}
+		isRestoreSms = false;
+	}
+
+	@SuppressLint("InlinedApi")
+	public static void endRestoreSms(Context context) {
+		if (Build.VERSION.SDK_INT > 18) {
+			Intent intent = new Intent(Sms.Intents.ACTION_CHANGE_DEFAULT);
+			intent.putExtra(Sms.Intents.EXTRA_PACKAGE_NAME, defaultSmsApp);
+			context.startActivity(intent);
+		}
 	}
 
 	public static void doAutoSmsBackup(final Context context) {

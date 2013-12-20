@@ -41,6 +41,8 @@ public class SmsRestoreService extends Service {
 		public void onProgressChange(int completed, int total);
 
 		public void onRestoreAlreadyRunning();
+
+		public void onRestoreDone();
 	}
 
 	public void doRestore(final Context context) {
@@ -51,9 +53,13 @@ public class SmsRestoreService extends Service {
 				smsRestoreListener.onSmsAlreadyExist();
 			}
 			isRestoreRunning = false;
+			if (smsRestoreListener != null) {
+				smsRestoreListener.onRestoreDone();
+			}
 			this.stopSelf();
 			return;
 		}
+
 		long count = getTotalSmsCount(context);
 		List<SMSBean> sbList = new ArrayList<SMSBean>();
 		long limitX = 0;
@@ -75,12 +81,18 @@ public class SmsRestoreService extends Service {
 			// no backup sms
 			isRestoreRunning = false;
 			this.stopSelf();
+			if (smsRestoreListener != null) {
+				smsRestoreListener.onRestoreDone();
+			}
 			return;
 		}
 		if (sbList.isEmpty()) {
 			// no backup sms
 			isRestoreRunning = false;
 			this.stopSelf();
+			if (smsRestoreListener != null) {
+				smsRestoreListener.onRestoreDone();
+			}
 			return;
 		} else {
 			List<Uri> uriList = new ArrayList<Uri>();
@@ -110,6 +122,9 @@ public class SmsRestoreService extends Service {
 		}
 		isRestoreRunning = false;
 		this.stopSelf();
+		if (smsRestoreListener != null) {
+			smsRestoreListener.onRestoreDone();
+		}
 	}
 
 	public boolean isRestoreRunning() {

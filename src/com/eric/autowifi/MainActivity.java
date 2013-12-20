@@ -39,6 +39,7 @@ import com.eric.profile.ProfileCatagoryActivity;
 
 @SuppressLint("HandlerLeak")
 public class MainActivity extends Activity {
+	private final String TAG = "MainActivity";
 	public static final int UPDATE_SMS_BACKUP_TIME = 1;
 	private View lastBackupDateContainer;
 	private Button profileSettingBtn;
@@ -100,6 +101,11 @@ public class MainActivity extends Activity {
 						}
 					});
 				}
+
+				@Override
+				public void onRestoreDone() {
+					Utils.endRestoreSms(MainActivity.this);
+				}
 			});
 			mBound = true;
 		}
@@ -138,9 +144,7 @@ public class MainActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						System.out.println("start SmsRestoreService");
-						Intent intent = new Intent(MainActivity.this,
-								SmsRestoreService.class);
-						startService(intent);
+						Utils.doRestoreImmediatly(MainActivity.this);
 					}
 				});
 
@@ -420,6 +424,13 @@ public class MainActivity extends Activity {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d(TAG, "onResume");
+		Utils.continueRestoreSms(this);
 	}
 
 	@Override
