@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.DetailedState;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -62,13 +63,17 @@ public class WifiStateReceiver extends BroadcastReceiver {
 			});
 
 			Utils.doAutoWifiProfile(context);
+			Utils.setLastWifi(context);
 		} else if (DetailedState.DISCONNECTED == state) {
 			Log.d("WifiStateReceiver", "WIFI DISCONNECTED.");
 			Utils.startAlarm(context,
 					Constants.DISCONNECT_TO_CONNECT_TRIGGER_AFTER_MILLISECONDS,
 					Constants.DEFAULT_ALARM_INTERVAL);
+			Utils.doAutoWifiDisconnectProfile(context,Utils.getLastWifi(context));
+			Utils.clearLastWifi(context);
 		} else {
 			Log.d("WifiStateReceiver", "WIFI OTHER STATES.");
+			Utils.clearLastWifi(context);
 		}
 	}
 }

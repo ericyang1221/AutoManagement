@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eric.autowifi"
-    android:versionCode="17"
-    android:versionName="1.7" >
+    android:versionCode="18"
+    android:versionName="1.8" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -128,6 +128,13 @@
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".ApplicationInstallUninstallReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />  
+            </intent-filter>
+        </receiver>
 
         <!-- push service client -->
         <receiver android:name=".PushMessageReceiver" >
@@ -197,7 +204,7 @@
             android:value="CXT5cE1b6DzGthxu9Yvt3gQa" />
         <meta-data
             android:name="channel"
-            android:value="AnzhuoMarket" />
+            android:value="offical" />
     </application>
 
 </manifest>

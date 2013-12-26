@@ -39,11 +39,14 @@ public class TriggerFragment extends AutoManagementFragment {
 	private TextView date2Text;
 	private TextView date3Text;
 	private TextView date4Text;
-	private LinearLayout wifi;
+	private LinearLayout triggerWifi;
+	private LinearLayout untriggerWifi;
 	private TextView triggerTypeText;
 	private TextView triggerWifiText;
+	private TextView untriggerWifiText;
 	private String[] wifiArray;
-	private boolean[] wifiArrayIsChecked;
+	private boolean[] triggerWifiArrayIsChecked;
+	private boolean[] untriggerWifiArrayIsChecked;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +62,8 @@ public class TriggerFragment extends AutoManagementFragment {
 				R.id.tf_trigger_type_text);
 		triggerWifiText = (TextView) this.getActivity().findViewById(
 				R.id.tf_trigger_wifi_text);
+		untriggerWifiText = (TextView) this.getActivity().findViewById(
+				R.id.tf_untrigger_wifi_text);
 		date1 = this.getActivity().findViewById(R.id.tf_trigger_days_and_time1);
 		date2 = this.getActivity().findViewById(R.id.tf_trigger_days_and_time2);
 		date3 = this.getActivity().findViewById(R.id.tf_trigger_days_and_time3);
@@ -73,8 +78,10 @@ public class TriggerFragment extends AutoManagementFragment {
 		date4Text = (TextView) this.getActivity().findViewById(
 				R.id.tf_trigger_days_and_time_text4);
 
-		wifi = (LinearLayout) this.getActivity().findViewById(
+		triggerWifi = (LinearLayout) this.getActivity().findViewById(
 				R.id.tf_trigger_wifi);
+		untriggerWifi = (LinearLayout) this.getActivity().findViewById(
+				R.id.tf_untrigger_wifi);
 
 		triggerType.setOnClickListener(new OnClickListener() {
 
@@ -84,11 +91,19 @@ public class TriggerFragment extends AutoManagementFragment {
 			}
 
 		});
-		wifi.setOnClickListener(new OnClickListener() {
+		triggerWifi.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				showWifiTriggerDialog();
+				showWifiTriggerDialog(true);
+			}
+
+		});
+		untriggerWifi.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showWifiTriggerDialog(false);
 			}
 
 		});
@@ -195,7 +210,8 @@ public class TriggerFragment extends AutoManagementFragment {
 				}
 				if (sb.length() > 0) {
 					sb.deleteCharAt(sb.length() - 1);
-					sb.append(TimeTriggerDialog.DTSP).append(hourOfDay).append(TimeTriggerDialog.TSP).append(minute);
+					sb.append(TimeTriggerDialog.DTSP).append(hourOfDay)
+							.append(TimeTriggerDialog.TSP).append(minute);
 				} else {
 					sb.setLength(0);
 				}
@@ -230,7 +246,9 @@ public class TriggerFragment extends AutoManagementFragment {
 		});
 	}
 
-	private void showWifiTriggerDialog() {
+	private void showWifiTriggerDialog(final boolean isTriggered) {
+		boolean[] wifiArrayIsChecked = isTriggered ? triggerWifiArrayIsChecked
+				: untriggerWifiArrayIsChecked;
 		final List<String> selectedList = new ArrayList<String>();
 		for (int i = 0; i < wifiArrayIsChecked.length; i++) {
 			if (wifiArrayIsChecked[i]) {
@@ -260,10 +278,17 @@ public class TriggerFragment extends AutoManagementFragment {
 								String triggeredWifi = gson
 										.toJson(selectedList);
 								Log.d(TAG, triggeredWifi);
-								pb.setTriggeredWifi(triggeredWifi);
-								pdb.update(pb);
-								triggerWifiText
-										.setText(Utils.formatProfileWifiName(selectedList));
+								if(isTriggered){
+									pb.setTriggeredWifi(triggeredWifi);
+									pdb.update(pb);
+									triggerWifiText.setText(Utils
+											.formatProfileWifiName(selectedList));
+								}else{
+									pb.setUntriggeredWifi(triggeredWifi);
+									pdb.update(pb);
+									untriggerWifiText.setText(Utils
+											.formatProfileWifiName(selectedList));
+								}
 							}
 						}).show();
 	}
@@ -275,7 +300,8 @@ public class TriggerFragment extends AutoManagementFragment {
 			date2.setVisibility(View.VISIBLE);
 			date3.setVisibility(View.VISIBLE);
 			date4.setVisibility(View.VISIBLE);
-			wifi.setVisibility(View.GONE);
+			triggerWifi.setVisibility(View.GONE);
+			untriggerWifi.setVisibility(View.GONE);
 
 			date1Text.setText(pb.getTriggerDate1());
 			date2Text.setText(pb.getTriggerDate2());
@@ -287,7 +313,8 @@ public class TriggerFragment extends AutoManagementFragment {
 			date2.setVisibility(View.GONE);
 			date3.setVisibility(View.GONE);
 			date4.setVisibility(View.GONE);
-			wifi.setVisibility(View.VISIBLE);
+			triggerWifi.setVisibility(View.VISIBLE);
+			untriggerWifi.setVisibility(View.VISIBLE);
 
 			final WifiManager wifiManager = (WifiManager) this.getActivity()
 					.getSystemService(Context.WIFI_SERVICE);
@@ -295,34 +322,55 @@ public class TriggerFragment extends AutoManagementFragment {
 					.getConfiguredNetworks();
 			if (configs == null) {
 				wifiArray = null;
-				wifiArrayIsChecked = null;
-				wifi.setEnabled(false);
-				for (int i = 0; i < wifi.getChildCount(); i++) {
-					wifi.getChildAt(i).setEnabled(false);
+				triggerWifiArrayIsChecked = null;
+				untriggerWifiArrayIsChecked = null;
+				triggerWifi.setEnabled(false);
+				for (int i = 0; i < triggerWifi.getChildCount(); i++) {
+					triggerWifi.getChildAt(i).setEnabled(false);
+				}
+				untriggerWifi.setEnabled(false);
+				for (int i = 0; i < untriggerWifi.getChildCount(); i++) {
+					untriggerWifi.getChildAt(i).setEnabled(false);
 				}
 				triggerWifiText.setText(R.string.please_open_wifi);
+				untriggerWifiText.setText(R.string.please_open_wifi);
 			} else {
 				int size = configs.size();
 				wifiArray = new String[size];
-				wifiArrayIsChecked = new boolean[size];
+				triggerWifiArrayIsChecked = new boolean[size];
+				untriggerWifiArrayIsChecked = new boolean[size];
 				Gson gson = new Gson();
 				Type type = new TypeToken<List<String>>() {
 				}.getType();
-				List<String> selectedList = gson.fromJson(
+				List<String> triggeredWifiSelectedList = gson.fromJson(
 						pb.getTriggeredWifi(), type);
+				List<String> untriggeredWifiSelectedList = gson.fromJson(
+						pb.getUntriggeredWifi(), type);
 				for (int i = 0; i < size; i++) {
 					wifiArray[i] = configs.get(i).SSID;
-					wifiArrayIsChecked[i] = false;
-					if (selectedList != null) {
-						for (String s : selectedList) {
+					triggerWifiArrayIsChecked[i] = false;
+					untriggerWifiArrayIsChecked[i] = false;
+					if (triggeredWifiSelectedList != null) {
+						for (String s : triggeredWifiSelectedList) {
 							if (wifiArray[i].equals(s)) {
-								wifiArrayIsChecked[i] = true;
+								triggerWifiArrayIsChecked[i] = true;
+								break;
+							}
+						}
+					}
+					if (untriggeredWifiSelectedList != null) {
+						for (String s : untriggeredWifiSelectedList) {
+							if (wifiArray[i].equals(s)) {
+								untriggerWifiArrayIsChecked[i] = true;
 								break;
 							}
 						}
 					}
 				}
-				triggerWifiText.setText(Utils.formatProfileWifiName(selectedList));
+				triggerWifiText.setText(Utils
+						.formatProfileWifiName(triggeredWifiSelectedList));
+				untriggerWifiText.setText(Utils
+						.formatProfileWifiName(untriggeredWifiSelectedList));
 			}
 		} else {
 			which = 0;

@@ -190,6 +190,36 @@
                 android:layout_marginTop="5dp"
                 android:background="#99999999" />
         </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/tf_untrigger_wifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/fragment_item_selector"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/untrigger_wifi"
+                android:textColor="#666666"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tf_untrigger_wifi_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="#666666"
+                android:textSize="12dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#99999999" />
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

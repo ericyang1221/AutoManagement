@@ -18,9 +18,10 @@ public class ProfileDB extends SQLiteOpenHelper {
 	private static final String DB_NAME = "PROFILE_DB";
 	private final String TBL_NAME = "PROFILE";
 	private Context context;
+	private final static int VERSION = 2;
 
 	public ProfileDB(Context context) {
-		super(context, DB_NAME, null, 1);
+		super(context, DB_NAME, null, VERSION);
 		this.context = context;
 	}
 
@@ -28,7 +29,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String sql = "Create table IF NOT EXISTS "
 				+ TBL_NAME
-				+ "(id integer PRIMARY KEY,profile_name varchar(50) UNIQUE,profile_icon integer,trigger_type integer,triggered_wifi varchar(255),trigger_date1 varchar(200),trigger_date2 varchar(200),trigger_date3 varchar(200),trigger_date4 varchar(200),ring_mode integer,ring_volumn integer,notification_mode integer,notification_volumn integer,wifi integer,gps integer,bluetooth integer,sync_data integer)";
+				+ "(id integer PRIMARY KEY,profile_name varchar(50) UNIQUE,profile_icon integer,trigger_type integer,triggered_wifi varchar(255),untriggered_wifi varchar(255),trigger_date1 varchar(200),trigger_date2 varchar(200),trigger_date3 varchar(200),trigger_date4 varchar(200),ring_mode integer,ring_volumn integer,notification_mode integer,notification_volumn integer,wifi integer,gps integer,bluetooth integer,sync_data integer)";
 		db.execSQL(sql);
 		initDbRow(db, ProfileBean.instanceAuto(context));
 		initDbRow(db, ProfileBean.instanceSilent(context));
@@ -44,7 +45,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 	public List<ProfileBean> selectAll() {
 		List<ProfileBean> pbList = new ArrayList<ProfileBean>();
 		String[] columns = new String[] { "id", "profile_name", "profile_icon",
-				"trigger_type", "triggered_wifi", "trigger_date1",
+				"trigger_type", "triggered_wifi","untriggered_wifi", "trigger_date1",
 				"trigger_date2", "trigger_date3", "trigger_date4", "ring_mode",
 				"ring_volumn", "notification_mode", "notification_volumn",
 				"wifi", "gps", "bluetooth", "sync_data" };
@@ -63,20 +64,21 @@ public class ProfileDB extends SQLiteOpenHelper {
 			int profileIcon = c.getInt(2);
 			int triggerType = c.getInt(3);
 			String triggeredWifi = c.getString(4);
-			String triggerDate1 = c.getString(5);
-			String triggerDate2 = c.getString(6);
-			String triggerDate3 = c.getString(7);
-			String triggerDate4 = c.getString(8);
-			int ringMode = c.getInt(9);
-			int ringVolumn = c.getInt(10);
-			int notificationMode = c.getInt(11);
-			int notificationVolumn = c.getInt(12);
-			int wifi = c.getInt(13);
-			int gps = c.getInt(14);
-			int bluetooth = c.getInt(15);
-			int syncData = c.getInt(16);
+			String untriggeredWifi = c.getString(5);
+			String triggerDate1 = c.getString(6);
+			String triggerDate2 = c.getString(7);
+			String triggerDate3 = c.getString(8);
+			String triggerDate4 = c.getString(9);
+			int ringMode = c.getInt(10);
+			int ringVolumn = c.getInt(11);
+			int notificationMode = c.getInt(12);
+			int notificationVolumn = c.getInt(13);
+			int wifi = c.getInt(14);
+			int gps = c.getInt(15);
+			int bluetooth = c.getInt(16);
+			int syncData = c.getInt(17);
 			ProfileBean pb = new ProfileBean(id, profileName, profileIcon,
-					triggerType, triggeredWifi, triggerDate1, triggerDate2,
+					triggerType, triggeredWifi,untriggeredWifi, triggerDate1, triggerDate2,
 					triggerDate3, triggerDate4, ringMode, ringVolumn,
 					notificationMode, notificationVolumn, wifi, gps, bluetooth,
 					syncData);
@@ -92,7 +94,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 	public List<ProfileBean> selectAllExcludeAuto() {
 		List<ProfileBean> pbList = new ArrayList<ProfileBean>();
 		String[] columns = new String[] { "id", "profile_name", "profile_icon",
-				"trigger_type", "triggered_wifi", "trigger_date1",
+				"trigger_type", "triggered_wifi","untriggered_wifi", "trigger_date1",
 				"trigger_date2", "trigger_date3", "trigger_date4", "ring_mode",
 				"ring_volumn", "notification_mode", "notification_volumn",
 				"wifi", "gps", "bluetooth", "sync_data" };
@@ -115,20 +117,21 @@ public class ProfileDB extends SQLiteOpenHelper {
 			int profileIcon = c.getInt(2);
 			int triggerType = c.getInt(3);
 			String triggeredWifi = c.getString(4);
-			String triggerDate1 = c.getString(5);
-			String triggerDate2 = c.getString(6);
-			String triggerDate3 = c.getString(7);
-			String triggerDate4 = c.getString(8);
-			int ringMode = c.getInt(9);
-			int ringVolumn = c.getInt(10);
-			int notificationMode = c.getInt(11);
-			int notificationVolumn = c.getInt(12);
-			int wifi = c.getInt(13);
-			int gps = c.getInt(14);
-			int bluetooth = c.getInt(15);
-			int syncData = c.getInt(16);
+			String untriggeredWifi = c.getString(5);
+			String triggerDate1 = c.getString(6);
+			String triggerDate2 = c.getString(7);
+			String triggerDate3 = c.getString(8);
+			String triggerDate4 = c.getString(9);
+			int ringMode = c.getInt(10);
+			int ringVolumn = c.getInt(11);
+			int notificationMode = c.getInt(12);
+			int notificationVolumn = c.getInt(13);
+			int wifi = c.getInt(14);
+			int gps = c.getInt(15);
+			int bluetooth = c.getInt(16);
+			int syncData = c.getInt(17);
 			ProfileBean pb = new ProfileBean(id, profileName, profileIcon,
-					triggerType, triggeredWifi, triggerDate1, triggerDate2,
+					triggerType, triggeredWifi, untriggeredWifi,triggerDate1, triggerDate2,
 					triggerDate3, triggerDate4, ringMode, ringVolumn,
 					notificationMode, notificationVolumn, wifi, gps, bluetooth,
 					syncData);
@@ -144,7 +147,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 	public ProfileBean selectProfileById(int pid) {
 		ProfileBean pb = null;
 		String[] columns = new String[] { "id", "profile_name", "profile_icon",
-				"trigger_type", "triggered_wifi", "trigger_date1",
+				"trigger_type", "triggered_wifi","untriggered_wifi", "trigger_date1",
 				"trigger_date2", "trigger_date3", "trigger_date4", "ring_mode",
 				"ring_volumn", "notification_mode", "notification_volumn",
 				"wifi", "gps", "bluetooth", "sync_data" };
@@ -163,20 +166,21 @@ public class ProfileDB extends SQLiteOpenHelper {
 			int profileIcon = c.getInt(2);
 			int triggerType = c.getInt(3);
 			String triggeredWifi = c.getString(4);
-			String triggerDate1 = c.getString(5);
-			String triggerDate2 = c.getString(6);
-			String triggerDate3 = c.getString(7);
-			String triggerDate4 = c.getString(8);
-			int ringMode = c.getInt(9);
-			int ringVolumn = c.getInt(10);
-			int notificationMode = c.getInt(11);
-			int notificationVolumn = c.getInt(12);
-			int wifi = c.getInt(13);
-			int gps = c.getInt(14);
-			int bluetooth = c.getInt(15);
-			int syncData = c.getInt(16);
+			String untriggeredWifi = c.getString(5);
+			String triggerDate1 = c.getString(6);
+			String triggerDate2 = c.getString(7);
+			String triggerDate3 = c.getString(8);
+			String triggerDate4 = c.getString(9);
+			int ringMode = c.getInt(10);
+			int ringVolumn = c.getInt(11);
+			int notificationMode = c.getInt(12);
+			int notificationVolumn = c.getInt(13);
+			int wifi = c.getInt(14);
+			int gps = c.getInt(15);
+			int bluetooth = c.getInt(16);
+			int syncData = c.getInt(17);
 			pb = new ProfileBean(id, profileName, profileIcon, triggerType,
-					triggeredWifi, triggerDate1, triggerDate2, triggerDate3,
+					triggeredWifi,untriggeredWifi, triggerDate1, triggerDate2, triggerDate3,
 					triggerDate4, ringMode, ringVolumn, notificationMode,
 					notificationVolumn, wifi, gps, bluetooth, syncData);
 		}
@@ -195,6 +199,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 		values.put("profile_icon", pb.getProfileIcon());
 		values.put("trigger_type", pb.getTriggerType());
 		values.put("triggered_wifi", pb.getTriggeredWifi());
+		values.put("untriggered_wifi", pb.getUntriggeredWifi());
 		values.put("trigger_date1", pb.getTriggerDate1());
 		values.put("trigger_date2", pb.getTriggerDate2());
 		values.put("trigger_date3", pb.getTriggerDate3());
@@ -224,6 +229,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 		values.put("profile_icon", pb.getProfileIcon());
 		values.put("trigger_type", pb.getTriggerType());
 		values.put("triggered_wifi", pb.getTriggeredWifi());
+		values.put("untriggered_wifi", pb.getUntriggeredWifi());
 		values.put("trigger_date1", pb.getTriggerDate1());
 		values.put("trigger_date2", pb.getTriggerDate2());
 		values.put("trigger_date3", pb.getTriggerDate3());
@@ -265,6 +271,7 @@ public class ProfileDB extends SQLiteOpenHelper {
 		values.put("profile_icon", pb.getProfileIcon());
 		values.put("trigger_type", pb.getTriggerType());
 		values.put("triggered_wifi", pb.getTriggeredWifi());
+		values.put("untriggered_wifi", pb.getUntriggeredWifi());
 		values.put("trigger_date1", pb.getTriggerDate1());
 		values.put("trigger_date2", pb.getTriggerDate2());
 		values.put("trigger_date3", pb.getTriggerDate3());

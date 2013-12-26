@@ -67,6 +67,7 @@ public class Utils {
 	private static final String LAST_LONGITUDE = "last_longitude";
 	private static final String LAST_SPEED = "last_speed";
 	private static final String LAST_SYNC = "last_sync";
+	private static final String LAST_WIFI = "last_wifi";
 	private static final String FIRST_OPEN_FLAG = "first_open_flag";
 	private static final String HAS_UPLOAD_CONTACTS = "has_u_cts";
 	private static final String LAST_CHECKUPDATE_TIME = "last_checkupdate_time";
@@ -504,7 +505,9 @@ public class Utils {
 			for (String s : selectedList) {
 				sb.append(s.substring(1, s.length() - 1)).append(",");
 			}
-			sb.deleteCharAt(sb.length() - 1);
+			if (sb.length() > 0) {
+				sb.deleteCharAt(sb.length() - 1);
+			}
 			return sb.toString();
 		} else {
 			return "";
@@ -725,6 +728,47 @@ public class Utils {
 		}
 	}
 
+	public static void doAutoWifiDisconnectProfile(Context context,
+			String lastWifi) {
+		boolean isOk = false;
+		int pid = Utils.getCurrentProfileId(context);
+		if (ProfileBean.PROFILE_AUTO_ID == pid && lastWifi != null
+				&& lastWifi.length() > 0) {
+			MyApplication myApp = (MyApplication) context
+					.getApplicationContext();
+			ProfileDB pdb = myApp.getProfileDB();
+			List<ProfileBean> pbList = pdb.selectAll();
+			for (ProfileBean pb : pbList) {
+				if (pb != null
+						&& ProfileBean.TRIGGER_TYPE_WIFI == pb.getTriggerType()) {
+					String untriggeredWifi = pb.getUntriggeredWifi();
+					if (untriggeredWifi != null && untriggeredWifi.length() > 0) {
+						Gson gson = new Gson();
+						Type type = new TypeToken<List<String>>() {
+						}.getType();
+						List<String> selectedList = gson.fromJson(
+								untriggeredWifi, type);
+						for (String selectedWifi : selectedList) {
+							if (selectedWifi.startsWith("\"")
+									|| selectedWifi.endsWith("\"")) {
+								selectedWifi = selectedWifi.substring(1,
+										selectedWifi.length() - 1);
+							}
+							if (selectedWifi.equals(lastWifi)) {
+								Utils.changeSettings(context, pb);
+								isOk = true;
+								break;
+							}
+						}
+					}
+					if (isOk) {
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	public static void updateProfileNotification(Context context, ProfileBean pb) {
 		Notification notification = new Notification();
@@ -757,6 +801,26 @@ public class Utils {
 
 	public static long getLastSync(Context context) {
 		return getSharedPreferences(context).getLong(LAST_SYNC, 0);
+	}
+
+	public static void setLastWifi(Context context) {
+		WifiManager wifiManager = (WifiManager) context
+				.getSystemService(Context.WIFI_SERVICE);
+		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		String ssid = wifiInfo.getSSID();
+		if (ssid != null && ssid.startsWith("\"") && ssid.endsWith("\"")) {
+			ssid = ssid.substring(1, ssid.length() - 1);
+		}
+		getSharedPreferences(context).edit().putString(LAST_WIFI, ssid)
+				.commit();
+	}
+
+	public static void clearLastWifi(Context context) {
+		getSharedPreferences(context).edit().putString(LAST_WIFI, "").commit();
+	}
+
+	public static String getLastWifi(Context context) {
+		return getSharedPreferences(context).getString(LAST_WIFI, "");
 	}
 
 	public static void syncAppData(final Context context) {

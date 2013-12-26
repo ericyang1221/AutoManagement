@@ -48,6 +48,7 @@
     <string name="info">提示</string>
     <string name="sure_to_delete">确定要删除？</string>
     <string name="trigger_wifi">Wifi连接至</string>
+    <string name="untrigger_wifi">Wifi断开自</string>
     <string name="wifi_trigger">Wifi触发</string>
     <string name="please_open_wifi">请打开Wifi开关</string>
     <string name="manual_or_time_trigger">手动或时间触发</string>

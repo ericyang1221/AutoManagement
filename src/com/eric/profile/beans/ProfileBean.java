@@ -28,6 +28,7 @@ public class ProfileBean implements Serializable {
 	private int profileIcon;
 	private int triggerType;
 	private String triggeredWifi;
+	private String untriggeredWifi;
 	private String triggerDate1;
 	private String triggerDate2;
 	private String triggerDate3;
@@ -63,16 +64,17 @@ public class ProfileBean implements Serializable {
 	}
 
 	public ProfileBean(int id, String profileName, int profileIcon,
-			int triggerType, String triggeredWifi, String triggerDate1,
-			String triggerDate2, String triggerDate3, String triggerDate4,
-			int ringMode, int ringVolumn, int notificationMode,
-			int notificationVolumn, int wifi, int gps, int bluetooth,
-			int syncData) {
+			int triggerType, String triggeredWifi, String untriggeredWifi,
+			String triggerDate1, String triggerDate2, String triggerDate3,
+			String triggerDate4, int ringMode, int ringVolumn,
+			int notificationMode, int notificationVolumn, int wifi, int gps,
+			int bluetooth, int syncData) {
 		this.id = id;
 		this.profileName = profileName;
 		this.profileIcon = profileIcon;
 		this.triggerType = triggerType;
 		this.triggeredWifi = triggeredWifi;
+		this.untriggeredWifi = untriggeredWifi;
 		this.triggerDate1 = triggerDate1;
 		this.triggerDate2 = triggerDate2;
 		this.triggerDate3 = triggerDate3;
@@ -223,16 +225,24 @@ public class ProfileBean implements Serializable {
 		this.triggeredWifi = triggeredWifi;
 	}
 
+	public String getUntriggeredWifi() {
+		return untriggeredWifi;
+	}
+
+	public void setUntriggeredWifi(String untriggeredWifi) {
+		this.untriggeredWifi = untriggeredWifi;
+	}
+
 	public static ProfileBean instanceAuto(Context ctx) {
 		return new ProfileBean(1, ctx.getString(R.string.auto), -1, -1, null,
-				null, null, null, null, -1, -1, -1, -1, -1, -1, -1, -1);
+				null, null, null, null, null, -1, -1, -1, -1, -1, -1, -1, -1);
 	}
 
 	public static ProfileBean instanceSilent(Context ctx) {
 		return new ProfileBean(2, ctx.getString(R.string.silent),
 				R.drawable.i_34, TRIGGER_TYPE_MANUAL_OR_TIME, "", "", "", "",
-				"", SOUND_VIBRATE, 0, SOUND_VIBRATE, 0, NO_CHANGE, NO_CHANGE,
-				NO_CHANGE, NO_CHANGE);
+				"", "", SOUND_VIBRATE, 0, SOUND_VIBRATE, 0, NO_CHANGE,
+				NO_CHANGE, NO_CHANGE, NO_CHANGE);
 	}
 
 	public boolean isAuto() {
