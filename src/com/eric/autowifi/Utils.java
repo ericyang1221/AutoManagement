@@ -3,6 +3,7 @@ package com.eric.autowifi;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -906,27 +907,32 @@ public class Utils {
 											.selectAll();
 									if (clbList != null && clbList.size() > 0) {
 										for (LocationBean lb : lbl) {
-											for (LocationBean clb : clbList) {
-												double d = Utils.getDistance(
-														lb.getLatitude(),
-														lb.getLongitude(),
-														clb.getLatitude(),
-														clb.getLongitude());
-												if (d > Constants.DEFAULT_INSERT_RADIUS) {
-													ldb.insert(lb);
-													Log.d(TAG,
-															"Restore location:("
-																	+ lb.getLatitude()
-																	+ ","
-																	+ lb.getLongitude()
-																	+ ")");
-												}
+											double lat = lb.getLatitude();
+											double lng = lb.getLongitude();
+											Collections.sort(clbList,
+													new DisAscComparator(lat,
+															lng));
+											LocationBean nearest = clbList
+													.get(0);
+											double d = Utils.getDistance(lat,
+													lng, nearest.getLatitude(),
+													nearest.getLongitude());
+											if (d > Constants.DEFAULT_INSERT_RADIUS) {
+												ldb.insert(lb);
+												Log.d(TAG, "Restore location:("
+														+ lat + "," + lng + ")");
 											}
 										}
 									} else {
 										for (LocationBean lb : lbl) {
 											try {
 												ldb.insert(lb);
+												Log.d(TAG,
+														"Database empty. Restore location:("
+																+ lb.getLatitude()
+																+ ","
+																+ lb.getLongitude()
+																+ ")");
 											} catch (Exception e) {
 												e.printStackTrace();
 											}

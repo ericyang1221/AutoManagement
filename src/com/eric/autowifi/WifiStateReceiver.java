@@ -3,19 +3,20 @@ package com.eric.autowifi;
 import java.util.Collections;
 import java.util.List;
 
-import com.eric.autowifi.beans.LocationBean;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.DetailedState;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import com.eric.autowifi.beans.LocationBean;
+
 public class WifiStateReceiver extends BroadcastReceiver {
+	private final String TAG = "WifiStateReceiver";
+
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		NetworkInfo networkInfo = intent
@@ -23,7 +24,7 @@ public class WifiStateReceiver extends BroadcastReceiver {
 		DetailedState state = networkInfo.getDetailedState();
 		Log.d("DetailedState", String.valueOf(state));
 		if (DetailedState.CONNECTED == state) {
-			Log.d("WifiStateReceiver", "WIFI CONNECTED.");
+			Log.d(TAG, "WIFI CONNECTED.");
 			Utils.stopAlarm(context);
 			Utils.initApiKey(context);
 			Utils.doAutoSmsBackup(context);
@@ -56,8 +57,7 @@ public class WifiStateReceiver extends BroadcastReceiver {
 						// }
 					} else {
 						ldb.insert(new LocationBean(0, lat, lng));
-						Log.d("WifiStateReceiver",
-								"first location has inserted.");
+						Log.d(TAG, "first location has inserted.");
 					}
 				}
 			});
@@ -69,7 +69,8 @@ public class WifiStateReceiver extends BroadcastReceiver {
 			Utils.startAlarm(context,
 					Constants.DISCONNECT_TO_CONNECT_TRIGGER_AFTER_MILLISECONDS,
 					Constants.DEFAULT_ALARM_INTERVAL);
-			Utils.doAutoWifiDisconnectProfile(context,Utils.getLastWifi(context));
+			Utils.doAutoWifiDisconnectProfile(context,
+					Utils.getLastWifi(context));
 			Utils.clearLastWifi(context);
 		} else {
 			Log.d("WifiStateReceiver", "WIFI OTHER STATES.");
