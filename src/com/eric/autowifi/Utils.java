@@ -700,7 +700,8 @@ public class Utils {
 								.getSystemService(Context.WIFI_SERVICE);
 						WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 						String wifi = wifiInfo.getSSID();
-						if (wifi.startsWith("\"") && wifi.endsWith("\"")) {
+						if (wifi != null && wifi.startsWith("\"")
+								&& wifi.endsWith("\"")) {
 							wifi = wifi.substring(1, wifi.length() - 1);
 						}
 						Gson gson = new Gson();

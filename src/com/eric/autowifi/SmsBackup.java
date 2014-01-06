@@ -199,15 +199,17 @@ public class SmsBackup {
 		{
 			Log.d("SmsBackup.doBackup",
 					"No need to backup,it is already newest.");
-			((Activity) context).runOnUiThread(new Runnable() {
-				@Override
-				public void run()
-				{
-					Toast.makeText(context,
-							context.getString(R.string.already_the_newest),
-							Toast.LENGTH_SHORT).show();
-				}
-			});
+			if (context instanceof Activity) {
+				((Activity) context).runOnUiThread(new Runnable() {
+					@Override
+					public void run()
+					{
+						Toast.makeText(context,
+								context.getString(R.string.already_the_newest),
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
 			SmsBackup.setLastDoBackupTime(context, System.currentTimeMillis());
 		}
 		if (cur != null && !cur.isClosed())
