@@ -331,6 +331,7 @@ public final class R {
         public static final int profile_icon=0x7f080028;
         public static final int rename=0x7f080040;
         public static final int restore_already_running=0x7f080012;
+        public static final int restore_sms_error_occoured=0x7f080047;
         public static final int restore_sms_immediatly=0x7f08000d;
         public static final int ring_mode=0x7f080020;
         public static final int ring_volumn=0x7f080021;

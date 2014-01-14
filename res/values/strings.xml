@@ -72,5 +72,6 @@
     <string name="profile_auto">情景模式 自动</string>
     <string name="sure_to_update">确定要升级么？</string>
     <string name="update">升级</string>
+    <string name="restore_sms_error_occoured">内部错误，请重试！</string>
 
 </resources>

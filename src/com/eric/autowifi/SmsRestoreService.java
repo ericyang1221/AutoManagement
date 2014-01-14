@@ -21,11 +21,13 @@ import android.util.Log;
 
 import com.eric.autowifi.beans.SMSBean;
 import com.eric.autowifi.beans.SMSJSONWrapper;
+import com.eric.autowifi.exceptions.NetworkErrorException;
 import com.google.gson.Gson;
 
 public class SmsRestoreService extends Service {
 	private MyBinder mBinder = new MyBinder();
 	private final static int RESTORE_COUNT_PER_REQUEST = 20;
+	private final static int RETRY_COUNT = 20;
 	private final static String ADDRESS = "address";
 	private final static String DATE = "date";
 	private final static String READ = "read";
@@ -42,10 +44,10 @@ public class SmsRestoreService extends Service {
 
 		public void onRestoreAlreadyRunning();
 
-		public void onRestoreDone();
+		public void onRestoreDone(boolean isError);
 	}
 
-	public void doRestore(final Context context) {
+	public void doRestore(final Context context) throws NetworkErrorException {
 		long lastBackupSmsDate = getLastBackupSmsDate(context);
 		long firstSmsDate = getFirstSmsDate(context);
 		if (firstSmsDate < lastBackupSmsDate) {
@@ -54,7 +56,7 @@ public class SmsRestoreService extends Service {
 			}
 			isRestoreRunning = false;
 			if (smsRestoreListener != null) {
-				smsRestoreListener.onRestoreDone();
+				smsRestoreListener.onRestoreDone(false);
 			}
 			this.stopSelf();
 			return;
@@ -63,11 +65,20 @@ public class SmsRestoreService extends Service {
 		long count = getTotalSmsCount(context);
 		List<SMSBean> sbList = new ArrayList<SMSBean>();
 		long limitX = 0;
+		int reTryCount = 0;
 		if (count > 0) {
 			int times = (int) (count / RESTORE_COUNT_PER_REQUEST) + 1;
 			double each = (double) 50 / times;
 			for (int i = 0; i < times; i++) {
 				SMSJSONWrapper wrapper = downloadSms(context, limitX, 0);
+				while(wrapper == null){
+					//network error. try again.
+					if(reTryCount > RETRY_COUNT){
+						throw new NetworkErrorException();
+					}
+					wrapper = downloadSms(context, limitX, 0);
+					reTryCount++;
+				}
 				limitX = Long.valueOf(wrapper.getImei());
 				sbList.addAll(wrapper.getSbList());
 				System.out.println(sbList.size());
@@ -82,7 +93,7 @@ public class SmsRestoreService extends Service {
 			isRestoreRunning = false;
 			this.stopSelf();
 			if (smsRestoreListener != null) {
-				smsRestoreListener.onRestoreDone();
+				smsRestoreListener.onRestoreDone(false);
 			}
 			return;
 		}
@@ -91,7 +102,7 @@ public class SmsRestoreService extends Service {
 			isRestoreRunning = false;
 			this.stopSelf();
 			if (smsRestoreListener != null) {
-				smsRestoreListener.onRestoreDone();
+				smsRestoreListener.onRestoreDone(false);
 			}
 			return;
 		} else {
@@ -123,7 +134,7 @@ public class SmsRestoreService extends Service {
 		isRestoreRunning = false;
 		this.stopSelf();
 		if (smsRestoreListener != null) {
-			smsRestoreListener.onRestoreDone();
+			smsRestoreListener.onRestoreDone(false);
 		}
 	}
 
@@ -309,7 +320,13 @@ public class SmsRestoreService extends Service {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					doRestore(SmsRestoreService.this);
+					try {
+						doRestore(SmsRestoreService.this);
+					} catch (NetworkErrorException e) {
+						if (smsRestoreListener != null) {
+							smsRestoreListener.onRestoreDone(true);
+						}
+					}
 				}
 			}).start();
 		} else {

@@ -103,7 +103,12 @@ public class MainActivity extends Activity {
 				}
 
 				@Override
-				public void onRestoreDone() {
+				public void onRestoreDone(boolean isError) {
+					if(isError){
+						Toast.makeText(MainActivity.this,
+								R.string.restore_sms_error_occoured,
+								Toast.LENGTH_LONG).show();
+					}
 					Utils.endRestoreSms(MainActivity.this);
 				}
 			});
