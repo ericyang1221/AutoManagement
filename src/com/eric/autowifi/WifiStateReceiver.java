@@ -27,8 +27,6 @@ public class WifiStateReceiver extends BroadcastReceiver {
 			Log.d(TAG, "WIFI CONNECTED.");
 			Utils.stopAlarm(context);
 			Utils.initApiKey(context);
-			Utils.doAutoSmsBackup(context);
-			Utils.syncAppData(context);
 			UpdateManager.doUpdate(context, false);
 
 			LocationManagerUtil l = new LocationManagerUtil(context);

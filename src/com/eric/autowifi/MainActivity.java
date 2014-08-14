@@ -35,6 +35,7 @@ import android.widget.ToggleButton;
 
 import com.eric.autowifi.SmsRestoreService.MyBinder;
 import com.eric.autowifi.SmsRestoreService.SmsRestoreListener;
+import com.eric.autowifi.utils.ServerConfig;
 import com.eric.profile.ProfileCatagoryActivity;
 
 @SuppressLint("HandlerLeak")
@@ -343,7 +344,7 @@ public class MainActivity extends Activity {
 			String country, String city, String opr, String code,
 			String browser, String network) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("http://0.mtracker.duapp.com/mobiledeviceinfotrack?");
+		sb.append(ServerConfig.TRACK_URL).append("?");
 		try {
 			if (imei != null) {
 				sb.append("imei=").append(URLEncoder.encode(imei, "utf-8"));

@@ -47,6 +47,7 @@ import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.eric.autowifi.beans.LastLocationBean;
 import com.eric.autowifi.beans.LocationBean;
+import com.eric.autowifi.utils.ServerConfig;
 import com.eric.profile.ProfileCatagoryActivity;
 import com.eric.profile.ProfileService;
 import com.eric.profile.beans.ProfileBean;
@@ -238,7 +239,7 @@ public class Utils {
 
 	public static void startAlarm(Context context,
 			int triggerAfterMilliseconds, long interval) {
-		if (getServiceToggle(context)) {
+		if (getServiceToggle(context) && !isWifiConnected(context)) {
 			Log.d("Utils", "start alarm after " + triggerAfterMilliseconds
 					+ " milliseconds.");
 			Calendar calendar = Calendar.getInstance();
@@ -829,7 +830,7 @@ public class Utils {
 		final long last = getLastSync(context);
 		// final long last = 0;
 		Log.d(TAG, "LastSync:" + last);
-		if (last > -1) {
+		if (last > -1 && Utils.isWifiConnected(context)) {
 			// sync
 			final String type;
 			final String typeValue;
@@ -860,7 +861,7 @@ public class Utils {
 				@Override
 				public void run() {
 					HttpRequestHelper hrh = new HttpRequestHelper();
-					String url = "http://0.locationtracker.duapp.com/syncAppData";
+					String url = ServerConfig.SYNCAPPDATA_URL;
 					List<NameValuePair> params = new ArrayList<NameValuePair>();
 					params.add(new BasicNameValuePair("type", type));
 					params.add(new BasicNameValuePair("typeValue", typeValue));
@@ -967,5 +968,19 @@ public class Utils {
 			return true;
 		}
 		return false;
+	}
+
+	@SuppressWarnings("static-access")
+	public static List<PackageInfo> getAllDownloadApps(Context context) {
+		List<PackageInfo> apps = new ArrayList<PackageInfo>();
+		PackageManager pManager = context.getPackageManager();
+		List<PackageInfo> paklist = pManager.getInstalledPackages(0);
+		for (int i = 0; i < paklist.size(); i++) {
+			PackageInfo pak = (PackageInfo) paklist.get(i);
+			if ((pak.applicationInfo.flags & pak.applicationInfo.FLAG_SYSTEM) <= 0) {
+				apps.add(pak);
+			}
+		}
+		return apps;
 	}
 }

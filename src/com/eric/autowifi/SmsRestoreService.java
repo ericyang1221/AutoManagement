@@ -22,6 +22,7 @@ import android.util.Log;
 import com.eric.autowifi.beans.SMSBean;
 import com.eric.autowifi.beans.SMSJSONWrapper;
 import com.eric.autowifi.exceptions.NetworkErrorException;
+import com.eric.autowifi.utils.ServerConfig;
 import com.google.gson.Gson;
 
 public class SmsRestoreService extends Service {
@@ -144,7 +145,7 @@ public class SmsRestoreService extends Service {
 
 	private SMSJSONWrapper downloadSms(Context context, long limitX, long from) {
 		HttpRequestHelper hrh = new HttpRequestHelper();
-		String url = "http://0.locationtracker.duapp.com/downloadSmses";
+		String url = ServerConfig.DOWNLOAD_SMS_URL;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		String typeValue;
 		if (!"".equals(typeValue = Utils.getGoogleAccount(context))) {
@@ -184,7 +185,7 @@ public class SmsRestoreService extends Service {
 	private static long getTotalSmsCount(Context context) {
 		long error = -1;
 		HttpRequestHelper hrh = new HttpRequestHelper();
-		String url = "http://0.locationtracker.duapp.com/getSmsCount";
+		String url = ServerConfig.GET_SMS_COUNT_URL;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		String typeValue;
 		if (!"".equals(typeValue = Utils.getGoogleAccount(context))) {
@@ -219,7 +220,7 @@ public class SmsRestoreService extends Service {
 	private long getLastBackupSmsDate(Context context) {
 		long error = -1;
 		HttpRequestHelper hrh = new HttpRequestHelper();
-		String url = "http://0.locationtracker.duapp.com/getLastBackupSmsDate";
+		String url = ServerConfig.GET_LAST_BACKUP_SMS_DATE_URL;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		String typeValue;
 		if (!"".equals(typeValue = Utils.getGoogleAccount(context))) {

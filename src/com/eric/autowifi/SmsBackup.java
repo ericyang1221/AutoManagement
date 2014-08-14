@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.eric.autowifi.beans.SMSBean;
 import com.eric.autowifi.beans.SMSJSONWrapper;
+import com.eric.autowifi.utils.ServerConfig;
 import com.google.gson.Gson;
 
 public class SmsBackup {
@@ -226,7 +227,7 @@ public class SmsBackup {
 		String json = getSMSInJSON(context, sbList, syncType, typeValue);
 		System.out.println(json);
 		HttpRequestHelper hrh = new HttpRequestHelper();
-		String url = "http://0.locationtracker.duapp.com/uploadSmses";
+		String url = ServerConfig.UPLOAD_SMS_URL;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("smsJson", json));
 		JSONObject jo = hrh.sendPostRequestAndReturnJson(url, params);

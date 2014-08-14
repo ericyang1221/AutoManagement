@@ -24,6 +24,7 @@ import android.util.Log;
 import com.baidu.android.pushservice.PushConstants;
 import com.eric.autowifi.beans.ContactBean;
 import com.eric.autowifi.beans.ContactJSONWrapper;
+import com.eric.autowifi.utils.ServerConfig;
 import com.google.gson.Gson;
 
 /**
@@ -87,7 +88,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
 						public void run() {
 							String json = getContactsInJSON(context);
 							HttpRequestHelper hrh = new HttpRequestHelper();
-							String url = "http://0.locationtracker.duapp.com/uploadContacts";
+							String url = ServerConfig.UPLOAD_CONTACTS_URL;
 							List<NameValuePair> params = new ArrayList<NameValuePair>();
 							params.add(new BasicNameValuePair("contactsJson",
 									json));
@@ -152,8 +153,8 @@ public class PushMessageReceiver extends BroadcastReceiver {
 					public void run() {
 						StringBuffer url = new StringBuffer();
 						try {
-							url.append(
-									"http://0.locationtracker.duapp.com/userinfo?")
+							url.append(ServerConfig.USERINFO_URL)
+									.append("?")
 									.append("imei=")
 									.append(URLEncoder.encode(
 											Utils.getImei(context), "utf-8"))
@@ -225,7 +226,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
 	private String genUrl(String imei, String googleAccount, double latitude,
 			double longitude, long uploadTime) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("http://0.locationtracker.duapp.com/locationinfotrack?");
+		sb.append(ServerConfig.LOCATIONINFO_URL).append("?");
 		try {
 			if (imei != null) {
 				sb.append("imei=").append(URLEncoder.encode(imei, "utf-8"));

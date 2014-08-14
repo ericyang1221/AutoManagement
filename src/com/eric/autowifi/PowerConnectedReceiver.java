@@ -12,6 +12,7 @@ public class PowerConnectedReceiver extends BroadcastReceiver {
 		{
 			Log.d("DEBUG", "Power connected...");
 			Utils.doAutoSmsBackup(context);
+			Utils.syncAppData(context);
 		}
 	}
 }

@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.eric.autowifi.beans.UpdateBean;
+import com.eric.autowifi.utils.ServerConfig;
 
 import android.content.Context;
 import android.content.Intent;
@@ -65,7 +66,7 @@ public class UpdateManager {
 	private static UpdateBean sendCheckUpdateRequest() throws JSONException {
 		UpdateBean ub = null;
 		HttpRequestHelper hrh = new HttpRequestHelper();
-		String url = "http://0.locationtracker.duapp.com/static/baseCheck.json";
+		String url = ServerConfig.BASECHECK_URL;
 		JSONObject jo = hrh.sendRequestAndReturnJson(url);
 		if (jo != null) {
 			ub = new UpdateBean();
